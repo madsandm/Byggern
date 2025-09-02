@@ -25,12 +25,13 @@ void blinky(uint8_t times){
     // Implement LED blinking functionality here
     for(uint8_t i = 0; i < times*2; i++){
         toggle_pin(&PORTB, PB0); // Toggle LED connected to PB0
-        for(volatile uint32_t i = 0; i < 100000; i++); // Simple delay
+        for(volatile uint32_t i = 0; i < 30000; i++); // Simple delay
     }
 }
 
 void uart_led(){
     uint8_t data = uart_receive();
+    toggle_pin(&PORTB, PB0);
     uart_transmit('B');
     uart_transmit(data);
     if (data == '1') {
