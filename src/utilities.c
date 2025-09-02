@@ -30,8 +30,8 @@ void blinky(uint8_t times){
 }
 
 void uart_led(){
-    volatile uint8_t data = uart_receive();
-    //uart_transmit(data);
+    uint8_t data = uart_receive();
+    uart_transmit(data);
     if (data == '1') {
         set_pin(&PORTB, PB0);
     } else {

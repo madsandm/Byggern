@@ -7,7 +7,7 @@ int main() {
     uart_init(9600);
     initialize_pin(&DDRB, PB0, OUTPUT);
     blinky(3);
-    uart_transmit('5');
+    uart_transmit('7');
 
     while (1){
         uart_led();

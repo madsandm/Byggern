@@ -10,7 +10,7 @@ uint8_t uartLastRecevied = 0;
 
 void uart_init(int baudrate) {
     // Set baud rate
-    baudrate = FOSC / (16 * baudrate) - 1;
+    baudrate = MY_UBRR;
     UBRR0H = (uint8_t)(baudrate >> 8);
     UBRR0L = (uint8_t)baudrate;
 
