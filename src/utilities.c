@@ -3,11 +3,11 @@
 #include <stdint.h>
 
 
-void initializePin(volatile uint8_t* DD, uint8_t pin, uint8_t mode) {
+void initialize_pin(volatile uint8_t* DD, uint8_t pin, uint8_t mode) {
     *DD |= (mode << pin);
 }
 
-void togglePin(volatile uint8_t* port, uint8_t pin) {
+void toggle_pin(volatile uint8_t* port, uint8_t pin) {
     // Toggle the specified pin on the specified port
     *port ^= (1 << pin);
 }

@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "blinky.h": "c"
+        "blinky.h": "c",
+        "io.h": "c"
     }
 }
