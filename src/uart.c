@@ -8,8 +8,9 @@ uint8_t UART_BUFFER[UART_BUFFER_LENGTH];
 uint8_t uartLastRead = 0;
 uint8_t uartLastRecevied = 0;
 
-void uart_init(uint16_t baudrate) {
+void uart_init(int baudrate) {
     // Set baud rate
+    baudrate = FOSC / (16 * baudrate) - 1;
     UBRR0H = (uint8_t)(baudrate >> 8);
     UBRR0L = (uint8_t)baudrate;
 
