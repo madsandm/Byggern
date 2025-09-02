@@ -9,6 +9,6 @@
 
 void uart_init(int baudrate);
 void uart_transmit(uint8_t data);
-uint8_t uart_receive(void);
+char uart_receive(void);
 
 #endif // UART_H

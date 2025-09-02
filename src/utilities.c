@@ -31,6 +31,7 @@ void blinky(uint8_t times){
 
 void uart_led(){
     uint8_t data = uart_receive();
+    uart_transmit('B');
     uart_transmit(data);
     if (data == '1') {
         set_pin(&PORTB, PB0);
