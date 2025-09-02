@@ -4,7 +4,7 @@
 #include "uart.h"
 
 int main() {
-    uart_init(9600);
+    uart_init(MY_UBRR);
     initialize_pin(&DDRB, PB0, OUTPUT);
     blinky(3);
     uart_transmit('7');
