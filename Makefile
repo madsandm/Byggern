@@ -11,20 +11,24 @@ ifeq ($(PROGRAM_WITH_JTAG), yes)
 endif
 
 BUILD_DIR := build
+SOURCE_DIR := src
 TARGET_CPU := atmega162
 TARGET_DEVICE := m162
 
 CC := avr-gcc
 CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb
 
-OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
+SRC_FILES := $(addprefix $(SOURCE_DIR)/,$(SOURCE_FILES))
+
+OBJECT_FILES := $(patsubst $(SOURCE_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
 .DEFAULT_GOAL := $(BUILD_DIR)/main.hex
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
 
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
+# Compile: from src/*.c → build/*.o
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
