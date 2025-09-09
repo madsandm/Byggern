@@ -29,11 +29,16 @@ void blinky(uint8_t times){
     }
 }
 
-void uart_led(){
-    char data = uart.read();
-    uart.write(data);
-
-    if (data) {
-        toggle_pin(&PORTB, PB0);
+void uart_led_command(){
+    while (uart.available()) {
+        char command = uart.read();
+        uart.write(command);
+        if (command == '1') {
+            clear_pin(&PORTB, PB0); // Turn on LED
+            uart.println("\nLED ON");
+        } else if (command == '0') {
+            set_pin(&PORTB, PB0); // Turn off LED
+            uart.println("\nLED OFF");
+        }
     }
 }
