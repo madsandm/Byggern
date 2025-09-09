@@ -2,6 +2,7 @@
 #include "uart.h"
 #include <avr/io.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "sram.h"
 
 
@@ -45,15 +46,26 @@ void uart_led_command(){
 }
 
 void test_latch(){
-    uint32_t iterations = 30000;
-    sram.data[1] = 0xFF;
-    
-    for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
-    sram.data[2] = 0xFF;
+    uint32_t iterations = 300000;
+    printf("Start latch test\n");
 
-    for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
-    sram.data[1] = 0xF0;
+    while (true) {
+        for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+        printf(".");
+        sram.data[1] = 0xFF;
+        
+        for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+        printf(".");
+        sram.data[2] = 0xFF;
 
-    for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
-    sram.data[2] = 0xF0;
+        for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+        printf(".");
+        sram.data[1] = 0;
+
+        for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+        printf(".");
+        sram.data[2] = 0;
+    }
+
+    printf("\nLatch test completed.\n");
 }

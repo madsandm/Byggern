@@ -1,12 +1,16 @@
 #ifndef SRAM_H
 #define SRAM_H
 
-#define EXTERNAL_RAM_ADDRESS 0x1800
+#include <stdint.h>
+
+#define EXTERNAL_RAM_ADDRESS 0x0500
+#define EXTERNAL_RAM_SIZE 0x0800
 
 void SRAM_test();
 
 typedef struct {
-    char* data;
+    volatile char* data;
+    const uint16_t size;
     void (*init)();
 } ISRAM;
 

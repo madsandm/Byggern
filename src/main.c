@@ -12,9 +12,12 @@ int main() {
     // Enable interrupts
     sei();
 
-    test_latch();
+    // test_latch();
 
-    // SRAM_test();
+    while (true) {
+        SRAM_test();
+        break;
+    }
 
     // initialize_pin(&DDRB, PB0, OUTPUT);
     // blinky(3);
@@ -22,6 +25,8 @@ int main() {
     // while (1){
     //     uart_led_command();
     // }
+
+    while (true);
     
     return 0;
 }
