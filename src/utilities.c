@@ -2,6 +2,7 @@
 #include "uart.h"
 #include <avr/io.h>
 #include <stdint.h>
+#include "sram.h"
 
 
 void initialize_pin(volatile uint8_t* DD, uint8_t pin, uint8_t mode) {
@@ -41,4 +42,18 @@ void uart_led_command(){
             uart.println("\nLED OFF");
         }
     }
+}
+
+void test_latch(){
+    uint32_t iterations = 30000;
+    sram.data[1] = 0xFF;
+    
+    for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+    sram.data[2] = 0xFF;
+
+    for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+    sram.data[1] = 0xF0;
+
+    for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
+    sram.data[2] = 0xF0;
 }

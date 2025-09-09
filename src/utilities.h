@@ -9,3 +9,5 @@ void set_pin(volatile uint8_t* port, uint8_t pin);
 void clear_pin(volatile uint8_t* port, uint8_t pin);
 void blinky(uint8_t times);
 void uart_led_command();
+
+void test_latch();
