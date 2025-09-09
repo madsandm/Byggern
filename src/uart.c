@@ -32,3 +32,11 @@ char uart_receive(void) {
     while (!(UCSR0A & (1 << RXC0)));
     return UDR0;
 }
+
+void uart_printf_enable() {
+    fdevopen(&uart_transmit, &uart_receive);
+}
+
+void uart_printline(const char* str) {
+    printf("%s\n\r", str);
+}

@@ -5,9 +5,10 @@
 
 int main() {
     uart_init(MY_UBRR);
+    uart_printf_enable();
+    
     initialize_pin(&DDRB, PB0, OUTPUT);
     blinky(3);
-    uart_transmit('7');
 
     while (1){
         uart_led();

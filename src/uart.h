@@ -10,5 +10,7 @@
 void uart_init(int baudrate);
 void uart_transmit(uint8_t data);
 char uart_receive(void);
+void uart_printf_enable();
+void uart_printline(const char* str);
 
 #endif // UART_H
