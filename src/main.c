@@ -4,6 +4,7 @@
 #include "utilities.h"
 #include "drivers/uart.h"
 #include "drivers/sram.h"
+#include "drivers/gpio.h"
 
 int main() {
     uart.init(MY_UBRR, true);
@@ -14,10 +15,10 @@ int main() {
 
     // test_latch();
 
-    sram.test();
+    GPIO.initPin(&DDRB, PB0, OUTPUT);
+    blinky(3);
 
-    // initialize_pin(&DDRB, PB0, OUTPUT);
-    // blinky(3);
+    sram.test();
 
     // while (1){
     //     uart_led_command();

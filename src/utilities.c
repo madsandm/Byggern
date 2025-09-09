@@ -4,28 +4,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "drivers/sram.h"
-
-void initialize_pin(volatile uint8_t* DD, uint8_t pin, uint8_t mode) {
-    *DD |= (mode << pin);
-}
-
-void toggle_pin(volatile uint8_t* port, uint8_t pin) {
-    // Toggle the specified pin on the specified port
-    *port ^= (1 << pin);
-}
-
-void set_pin(volatile uint8_t* port, uint8_t pin) {
-    *port |= (1 << pin);
-}
-
-void clear_pin(volatile uint8_t* port, uint8_t pin) {
-    *port &= ~(1 << pin);
-}
+#include "drivers/gpio.h"
 
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
     for(uint8_t i = 0; i < times*2; i++){
-        toggle_pin(&PORTB, PB0); // Toggle LED connected to PB0
+        GPIO.togglePin(&PORTB, PB0); // Toggle LED connected to PB0
         for(volatile uint32_t i = 0; i < 30000; i++); // Simple delay
     }
 }
@@ -35,10 +19,10 @@ void uart_led_command(){
         char command = uart.read();
         uart.write(command);
         if (command == '1') {
-            clear_pin(&PORTB, PB0); // Turn on LED
+            GPIO.clearPin(&PORTB, PB0); // Turn on LED
             uart.println("\nLED ON");
         } else if (command == '0') {
-            set_pin(&PORTB, PB0); // Turn off LED
+            GPIO.setPin(&PORTB, PB0); // Turn off LED
             uart.println("\nLED OFF");
         }
     }
