@@ -2,7 +2,7 @@
 #define UART_H
 
 #define FOSC 4915200 // Clock Speed
-#define BAUD 9600
+#define BAUD 19200
 #define MY_UBRR FOSC/16/BAUD-1
 #define RX_BUFFER_SIZE 32
 

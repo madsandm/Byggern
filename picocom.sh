@@ -1,3 +1,3 @@
 #!/bin/bash
 
-picocom -b 9600 --imap lfcrlf --omap crlf /dev/ttyS0
+picocom -b 19200 --imap lfcrlf --omap crlf /dev/ttyS0
