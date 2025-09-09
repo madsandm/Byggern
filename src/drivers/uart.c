@@ -1,4 +1,4 @@
-#include "uart.h"
+#include "drivers/uart.h"
 #include "utilities.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -63,7 +63,7 @@ static char uart_read() {
 }
 
 static void uart_println(const char* str) {
-    printf("%s\n\r", str);
+    printf("%s\n", str);
 }
 
 IUART uart = {

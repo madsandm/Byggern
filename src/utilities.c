@@ -1,8 +1,7 @@
 #include "utilities.h"
-#include "uart.h"
+#include "drivers/uart.h"
 #include <avr/io.h>
 #include <stdint.h>
-
 
 void initialize_pin(volatile uint8_t* DD, uint8_t pin, uint8_t mode) {
     *DD |= (mode << pin);

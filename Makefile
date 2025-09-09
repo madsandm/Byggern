@@ -1,5 +1,6 @@
-# List all source files to be compiled; separate with space
-SOURCE_FILES := main.c utilities.c uart.c
+SOURCE_DIR := src
+
+SRC_FILES := $(patsubst %.c,%,$(wildcard $(SOURCE_DIR)/*.c))
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
@@ -11,14 +12,11 @@ ifeq ($(PROGRAM_WITH_JTAG), yes)
 endif
 
 BUILD_DIR := build
-SOURCE_DIR := src
 TARGET_CPU := atmega162
 TARGET_DEVICE := m162
 
 CC := avr-gcc
-CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb
-
-SRC_FILES := $(addprefix $(SOURCE_DIR)/,$(SOURCE_FILES))
+CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -Iinclude
 
 OBJECT_FILES := $(patsubst $(SOURCE_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
@@ -55,3 +53,7 @@ debug:
 	sleep 2
 	avr-gdb -tui -iex "target remote localhost:4242" $(BUILD_DIR)/a.out
 	killall -s 9 avarice
+
+.PHONY: test
+test:
+	echo $(SRC_FILES)

@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "utilities.h"
-#include "uart.h"
+#include "drivers/uart.h"
 
 int main() {
     uart.init(MY_UBRR, true);
