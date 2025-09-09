@@ -14,10 +14,7 @@ int main() {
 
     // test_latch();
 
-    while (true) {
-        SRAM_test();
-        break;
-    }
+    sram.test();
 
     // initialize_pin(&DDRB, PB0, OUTPUT);
     // blinky(3);

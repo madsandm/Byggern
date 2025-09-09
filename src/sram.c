@@ -8,13 +8,8 @@ static void SRAM_init() {
     MCUCR |= (1 << SRE);
 }
 
-ISRAM sram = {
-    .data = (char*)EXTERNAL_RAM_ADDRESS,
-    .size = EXTERNAL_RAM_SIZE,
-    .init = SRAM_init
-};
 
-void SRAM_test() {
+static void SRAM_test() {
     uint16_t write_errors = 0;
     uint16_t retrieval_errors = 0;
     printf("\n\nStarting SRAM test...\n");
@@ -43,3 +38,10 @@ void SRAM_test() {
 
     printf("SRAM test completed with %d write errors and %d retrieval errors\n", write_errors, retrieval_errors);
 }
+
+ISRAM sram = {
+    .data = (char*)EXTERNAL_RAM_ADDRESS,
+    .size = EXTERNAL_RAM_SIZE,
+    .init = SRAM_init,
+    .test = SRAM_test
+};
