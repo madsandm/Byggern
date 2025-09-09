@@ -4,9 +4,8 @@
 #include "uart.h"
 
 int main() {
-    uart_init(MY_UBRR);
-    uart_printf_enable();
-    
+    uart.init(MY_UBRR, true);
+
     initialize_pin(&DDRB, PB0, OUTPUT);
     blinky(3);
 

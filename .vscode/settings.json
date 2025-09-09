@@ -1,8 +1,3 @@
 {
-    "files.associations": {
-        "blinky.h": "c",
-        "io.h": "c",
-        "utilities.h": "c",
-        "uart.h": "c"
-    }
+    "makefile.configureOnOpen": true
 }

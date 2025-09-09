@@ -30,10 +30,8 @@ void blinky(uint8_t times){
 }
 
 void uart_led(){
-    uint8_t data = uart_receive();
-
-    uart_printline("Received data:");
-    uart_printline((char[]){data, '\0'});
+    char data = uart.read();
+    uart.write(data);
 
     if (data) {
         toggle_pin(&PORTB, PB0);

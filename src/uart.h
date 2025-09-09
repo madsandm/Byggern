@@ -6,11 +6,15 @@
 #define MY_UBRR FOSC/16/BAUD-1
 
 #include <stdint.h>
+#include <stdbool.h>
 
-void uart_init(int baudrate);
-void uart_transmit(uint8_t data);
-char uart_receive(void);
-void uart_printf_enable();
-void uart_printline(const char* str);
+typedef struct {
+    void (*init)(const int baudrate, const bool enablePrintf);
+    void (*println)(const char* str);
+    int (*write)(const char data);
+    char (*read)();
+} IUART;
+
+IUART uart;
 
 #endif // UART_H
