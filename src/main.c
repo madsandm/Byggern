@@ -5,6 +5,7 @@
 #include "drivers/uart.h"
 #include "drivers/sram.h"
 #include "drivers/gpio.h"
+#include "drivers/timer.h"
 
 int main() {
     uart.init(MY_UBRR, true);
@@ -16,9 +17,12 @@ int main() {
     // test_latch();
 
     GPIO.initPin(&DDRB, PB0, OUTPUT);
-    blinky(3);
+    while (true) {
+        GPIO.togglePin(&PORTB, PB0); // Toggle LED connected to PB0
+        delay(500);
+    }
 
-    sram.test();
+    // sram.test();
 
     // while (1){
     //     uart_led_command();

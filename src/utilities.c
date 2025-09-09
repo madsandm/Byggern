@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "drivers/sram.h"
 #include "drivers/gpio.h"
+#include "drivers/timer.h"
 
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
