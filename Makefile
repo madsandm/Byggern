@@ -1,6 +1,6 @@
 SOURCE_DIR := src
 
-SRC_FILES := $(patsubst %.c,%,$(wildcard $(SOURCE_DIR)/*.c))
+SRC_FILES := $(shell find $(SOURCE_DIR) -type f -name '*.c')
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
@@ -19,11 +19,13 @@ CC := avr-gcc
 CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -Iinclude
 
 OBJECT_FILES := $(patsubst $(SOURCE_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
+OBJ_DIRS := $(sort $(dir $(OBJECT_FILES)))
 
 .DEFAULT_GOAL := $(BUILD_DIR)/main.hex
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
+	mkdir -p $(OBJ_DIRS)
 
 # Compile: from src/*.c → build/*.o
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c | $(BUILD_DIR)
@@ -56,4 +58,6 @@ debug:
 
 .PHONY: test
 test:
-	echo $(SRC_FILES)
+	@echo "SRC_FILES = $(SRC_FILES)"
+	@echo "OBJECT_FILES = $(OBJECT_FILES)"
+	@echo "OBJ_DIRS = $(OBJ_DIRS)"

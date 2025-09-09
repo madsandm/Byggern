@@ -3,19 +3,27 @@
 #include <avr/interrupt.h>
 #include "utilities.h"
 #include "drivers/uart.h"
+#include "drivers/sram.h"
 
 int main() {
     uart.init(MY_UBRR, true);
+    sram.init();
 
     // Enable interrupts
     sei();
 
-    initialize_pin(&DDRB, PB0, OUTPUT);
-    blinky(3);
+    // test_latch();
 
-    while (1){
-        uart_led_command();
-    }
+    sram.test();
+
+    // initialize_pin(&DDRB, PB0, OUTPUT);
+    // blinky(3);
+
+    // while (1){
+    //     uart_led_command();
+    // }
+
+    while (true);
     
     return 0;
 }
