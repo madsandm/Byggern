@@ -11,6 +11,7 @@ typedef struct {
     void (*read)();
     uint8_t (*getChannel)(uint8_t channel);
     uint8_t (*readChannel)(uint8_t channel);
+    void (*printChannels)();
 } IADC;
 
 IADC adc;
