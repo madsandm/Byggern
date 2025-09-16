@@ -4,13 +4,10 @@
 
 static void spi_init() {
     DDRB = (1 << DDB5) | (1 << DDB7); // Set SCK and MOSI as output;
-    //GPIO.initPin(&DDRB, DDB5, OUTPUT); // Set MOSI as output
-    //GPIO.initPin(&DDRB, DDB7, OUTPUT); // Set SCK as output
+    GPIO.initPin(&DDRB, DDB4, OUTPUT); // Set SS1 as output before enabling SPI
+    GPIO.initPin(&DDRB, DDB1, OUTPUT); // Set SS2 as output
     
     SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0); // Enable SPI, Master, set clock rate fck/16
-
-    GPIO.initPin(&DDRB, DDB4, OUTPUT); // Set SS as output
-    // Init second slave select pin when needed
 }
 
 static void spi_transmit(char data) {
