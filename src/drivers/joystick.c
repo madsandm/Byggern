@@ -55,14 +55,12 @@ static IPosition getPosition(IODevice device) {
     int32_t x_value = (int32_t)adc.getChannel(device.xChannel);
     int32_t y_value = (int32_t)adc.getChannel(device.yChannel);
 
-    int32_t scaler = 256;
-
-    pos.x = (int8_t)((
-        (x_value * scaler - device.minX * scaler) * 200 / (device.maxX - device.minX) - 100 * scaler
-    ) / scaler);
-    pos.y = (int8_t)((
-        (y_value * scaler - device.minY * scaler) * 200 / (device.maxY - device.minY) - 100 * scaler
-    ) / scaler);
+    pos.x = (int8_t)(
+        (x_value - device.minX) * 200 / (device.maxX - device.minX) - 100
+    );
+    pos.y = (int8_t)(
+        (y_value - device.minY) * 200 / (device.maxY - device.minY) - 100
+    );
 
     return pos; // returns position in range -100 to 100
 }

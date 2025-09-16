@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define JOYSTICK_NEUTRAL_ZONE 30
+#define JOYSTICK_NEUTRAL_ZONE 10
 
 typedef struct {
     const uint8_t xChannel;
