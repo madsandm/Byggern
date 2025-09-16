@@ -19,6 +19,10 @@ static int uart_transmit_with_stream(const char data, FILE *stream) {
     uart_transmit(data);
 }
 
+/**
+ * Initializes the UART with the specified baud rate.
+ * If enablePrintf is true, it sets up the UART for use with printf.
+ */
 static void uart_init(const int ubbr, const bool enablePrintf) {
     // Set baud rate
     UBRR0H = (uint8_t)(ubbr >> 8);

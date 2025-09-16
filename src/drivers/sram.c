@@ -4,8 +4,9 @@
 #include <avr/io.h>
 
 static void SRAM_init() {
-    // Enable external SRAM
+    // Enable external memory
     MCUCR |= (1 << SRE);
+    SFIOR |= (1 << XMM0);
 }
 
 
