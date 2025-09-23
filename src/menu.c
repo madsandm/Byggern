@@ -9,6 +9,14 @@ IMenuItem mainMenu = {
     .children = NULL
 };
 
+const IMenuItem children[] = {
+    { .name = "First", .numberOfChildren = 0, .children = NULL },
+    { .name = "Second", .numberOfChildren = 0, .children = NULL },
+    { .name = "Third", .numberOfChildren = 0, .children = NULL }
+};
+
+static int8_t menu_currentSelection = 0;
+
 static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
     if (child->parent != NULL) {
         // TODO: Handle
@@ -29,23 +37,30 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
 
 static void menu_init() {
 
+    for (uint8_t i = 0; i < sizeof(children) / sizeof(children[0]); i++) {
+        menu_addChild(&mainMenu, &(children[i]));
+    }
 }
 
-const IMenuItem children[] = {
-    { .name = "First", .numberOfChildren = 0, .children = NULL },
-    { .name = "Second", .numberOfChildren = 0, .children = NULL },
-    { .name = "Third", .numberOfChildren = 0, .children = NULL }
-};
-
-static void menu_show(IMenuItem menuItem) {
+static void menu_render(IMenuItem menuItem) {
     oled.clear();
     oled.pos(0, 32);
     oled.print(menuItem.name);
-    printf("%d\n", menuItem.numberOfChildren);
     for (uint8_t i = 0; i < menuItem.numberOfChildren; i++) {
         oled.pos(i + 1, 0);
+
+        if (menu_currentSelection == i) {
+            oled.print(">");
+        } else {
+            oled.print(" ");
+        }
+
         oled.print(menuItem.children[i]->name);
     }
+}
+
+static void menu_show(IMenuItem menuItem) {
+    menu_render(menuItem);
 }
 
 IMenu menu = {

@@ -39,7 +39,8 @@ int main() {
     spi.slave_deselect(&PORTB, DISPLAY_CS);
      */
 
-    menu.show();
+    menu.init();
+    menu.show(mainMenu);
     
     // oled.clear();
     // //oled.draw_pixel(30, 30, 1);
