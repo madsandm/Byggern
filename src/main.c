@@ -28,28 +28,34 @@ int main() {
     _delay_ms(1000);
 
     spi.slave_select(&PORTB, PB1);
-    spi.transmit(0xae);
-    spi.transmit(0xa1);
-    spi.transmit(0xda);
-    spi.transmit(0x12);
-    spi.transmit(0xc8);
-    spi.transmit(0xa8);
-    spi.transmit(0x3f);
-    spi.transmit(0xd5);
-    spi.transmit(0x80);
-    spi.transmit(0x81);
-    spi.transmit(0x50);
-    spi.transmit(0xd9);
-    spi.transmit(0x21);
-    spi.transmit(0x20);
-    spi.transmit(0x02);
-    spi.transmit(0xdb);
-    spi.transmit(0x30);
-    spi.transmit(0xad);
-    spi.transmit(0x00);
-    spi.transmit(0xa4);
-    spi.transmit(0xa6);
-    spi.transmit(0xaf);
+
+    char spi_setup_commands[] = {
+        0xae,
+        0xa1,
+        0xda,
+        0x12,
+        0xc8,
+        0xa8,
+        0x3f,
+        0xd5,
+        0x80,
+        0x81,
+        0x50,
+        0xd9,
+        0x21,
+        0x20,
+        0x02,
+        0xdb,
+        0x30,
+        0xad,
+        0x00,
+        0xa4,
+        0xa6,
+        0xaf
+    };
+
+    send_data(spi.stream, spi_setup_commands, sizeof(spi_setup_commands));
+
     spi.slave_deselect(&PORTB, PB1);
 
 
