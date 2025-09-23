@@ -16,4 +16,6 @@ void send_data(FILE* stream, const char* data, size_t size);
 
 void etch_a_sketch();
 
+void pong();
+
 #endif // UTILITIES_H

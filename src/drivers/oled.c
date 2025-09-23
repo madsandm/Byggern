@@ -96,13 +96,13 @@ static void oled_clear_line(uint8_t line) {
 }
 
 static void oled_pos(uint8_t row, uint8_t col) {
-    if (row >= 8 || col >= 128) return; // Out of bounds
+    if (row >= 64 || col >= 128) return; // Out of bounds
 
     spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.clearPin(&PORTB, DISPLAY_DC); // Command mode
-    spi.transmit(0xb0 + row);          // Set page address
+    GPIO.clearPin(&PORTB, DISPLAY_DC);   // Command mode
+    spi.transmit(0xb0 + (row / 8));      // Set page address
     spi.transmit(0x00 + (col & 0x0f));   // Set lower column
-    spi.transmit(0x10 + (col >> 4));        // Set higher column address
+    spi.transmit(0x10 + (col >> 4));     // Set higher column address
     spi.slave_deselect(&PORTB, DISPLAY_CS);
 }
 
@@ -125,7 +125,7 @@ static void oled_print(char* str) {
 static void oled_draw_pixel(uint8_t x, uint8_t y) {
     if (x >= 128 || y >= 64) return; // Out of bounds
 
-    oled_pos(y / 8, x);
+    oled.pos(y, x);
     spi.slave_select(&PORTB, DISPLAY_CS);
     GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
     spi.transmit(1 << (y % 8));
@@ -133,11 +133,17 @@ static void oled_draw_pixel(uint8_t x, uint8_t y) {
 }
 
 static void oled_draw_square(uint8_t x, uint8_t y, uint8_t size) {
+    if (x >= 128 || y >= 64 || size == 0 || size > 8) return; // Out of bounds or invalid size
+    //if (x + size > 128) size = 128 - x; // Adjust size if it exceeds display width
+    //if (y + size > 64) size = 64 - y;   // Adjust size if it exceeds display height
+
+    oled.pos(y, x);
+    spi.slave_select(&PORTB, DISPLAY_CS);
+    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
     for (uint8_t i = 0; i < size; i++) {
-        for (uint8_t j = 0; j < size; j++) {
-            oled_draw_pixel(x + i, y + j);
-        }
+        spi.transmit(pgm_read_byte(&squares[size - 1][i]));
     }
+    spi.slave_deselect(&PORTB, DISPLAY_CS); 
 }
 
 static void oled_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {

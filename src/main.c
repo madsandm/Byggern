@@ -29,6 +29,10 @@ int main() {
 
     _delay_ms(1000);
 
+    oled.clear();
+    //oled.draw_square(30, 30, 8);
+
+    //pong();
     etch_a_sketch();
     //oled.clear();
     //oled.circle(6, 30, 10);
