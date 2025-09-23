@@ -10,7 +10,10 @@
 typedef struct {
     void (*init)();
     void (*clear)();
-    void (*draw_pixel)(uint8_t x, uint8_t y, int on);
+    void (*goto_line)(uint8_t line);
+    void (*clear_line)(uint8_t line);
+    void (*pos)(uint8_t row, uint8_t col);
+    void (*print)(const char* str);
 } IOLED;
 
 IOLED oled;

@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #define F_CPU 4915200UL
-#include <avr/delay.h>
+#include <util/delay.h>
 #include <stdint.h>
 
 void blinky(uint8_t times);
