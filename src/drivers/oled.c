@@ -122,6 +122,73 @@ static void oled_print(char* str) {
     spi.slave_deselect(&PORTB, DISPLAY_CS);
 }
 
+static void oled_draw_pixel(uint8_t x, uint8_t y) {
+    if (x >= 128 || y >= 64) return; // Out of bounds
+
+    oled_pos(y / 8, x);
+    spi.slave_select(&PORTB, DISPLAY_CS);
+    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+    spi.transmit(1 << (y % 8));
+    spi.slave_deselect(&PORTB, DISPLAY_CS);
+}
+
+static void oled_draw_square(uint8_t x, uint8_t y, uint8_t size) {
+    for (uint8_t i = 0; i < size; i++) {
+        for (uint8_t j = 0; j < size; j++) {
+            oled_draw_pixel(x + i, y + j);
+        }
+    }
+}
+
+static void oled_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
+    int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+    int dy = abs(y2 - y1), sy = y1 < y2 ? 1 : -1; 
+    int err = (dx>dy ? dx : -dy)/2, e2;
+
+    for(;;){
+        // Set pixel (x1, y1)
+        oled_pos(y1 / 8, x1);
+        spi.slave_select(&PORTB, DISPLAY_CS);
+        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+        spi.transmit(1 << (y1 % 8));
+        spi.slave_deselect(&PORTB, DISPLAY_CS);
+        if (x1==x2 && y1==y2) break;
+        e2 = err;
+        if (e2 > -dx) { err -= dy; x1 += sx;
+        }
+        if (e2 < dy) { err += dx; y1 += sy; }
+    }
+}
+
+static void oled_circle(int xm, int ym, int r) {
+    int x = -r, y = 0, err = 2-2*r; /* II. Quadrant */
+    do {
+        oled_pos((ym + y) / 8, xm - x);
+        spi.slave_select(&PORTB, DISPLAY_CS);
+        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+        spi.transmit(1 << ((ym + y) % 8));
+        spi.slave_deselect(&PORTB, DISPLAY_CS);
+        oled_pos((ym - y) / 8, xm + x);
+        spi.slave_select(&PORTB, DISPLAY_CS);
+        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+        spi.transmit(1 << ((ym - y) % 8));
+        spi.slave_deselect(&PORTB, DISPLAY_CS);
+        oled_pos((ym + x) / 8, xm + y);
+        spi.slave_select(&PORTB, DISPLAY_CS);
+        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+        spi.transmit(1 << ((ym + x) % 8));
+        spi.slave_deselect(&PORTB, DISPLAY_CS);
+        oled_pos((ym - x) / 8, xm - y);
+        spi.slave_select(&PORTB, DISPLAY_CS);
+        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+        spi.transmit(1 << ((ym - x) % 8));
+        spi.slave_deselect(&PORTB, DISPLAY_CS);
+        r = err;
+        if (r > x) err += ++x*2+1;   /* err_x */
+        if (r <= y) err += ++y*2+1; /* err_y */
+    } while (x < 0);
+}
+
 
 IOLED oled = {
     .init = oled_init,
@@ -129,5 +196,9 @@ IOLED oled = {
     .goto_line = oled_goto_line,
     .clear_line = oled_clear_line,
     .pos = oled_pos,
-    .print = oled_print
+    .print = oled_print,
+    .draw_pixel = oled_draw_pixel,
+    .draw_square = oled_draw_square,
+    .line = oled_line,
+    .circle = oled_circle
 };

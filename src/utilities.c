@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "drivers/sram.h"
 #include "drivers/gpio.h"
+#include "drivers/io.h"
+#include "drivers/oled.h"
 
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
@@ -52,6 +54,25 @@ void test_latch(){
 
     printf("\nLatch test completed.\n");
 }
+
+void etch_a_sketch() {
+    while (true) {
+        if (io.read_buttons(2)) {
+            oled.clear();
+        }
+        uint8_t x = io.read_touchpad(0);
+        uint8_t y = io.read_touchpad(1);
+        printf("Touchpad X, Y: %d, %d\n", x, y);
+        uint8_t row = ((256 - y) * 8) / 256;
+        uint8_t col = (x * 128) / 256;
+        if (row > 7) row = 7;
+        if (col > 127) col = 127;
+        oled.pos(row, col);
+        oled.draw_square(col, row, 2);
+        _delay_us(100);
+    }
+}
+
 
 void send_data(FILE* stream, const char* data, size_t size) {
     fwrite(data, 1, size, stream);

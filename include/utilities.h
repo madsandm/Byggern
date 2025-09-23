@@ -14,4 +14,6 @@ void test_latch();
 
 void send_data(FILE* stream, const char* data, size_t size);
 
+void etch_a_sketch();
+
 #endif // UTILITIES_H
