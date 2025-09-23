@@ -9,13 +9,14 @@ typedef struct IMenuItem {
     uint8_t numberOfChildren;
     struct IMenuItem** children;
     struct IMenuItem* parent;
+    void (*entryPoint)();
 } IMenuItem;
 
 IMenuItem mainMenu;
 
 typedef struct {
     void (*init)();
-    void (*show)(IMenuItem menuItem);
+    void (*show)(IMenuItem* menuItem);
 } IMenu;
 
 IMenu menu;

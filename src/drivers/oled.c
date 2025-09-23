@@ -117,7 +117,7 @@ static void oled_print(char* str) {
             spi.transmit(pgm_read_byte(&font4[c - 0x20][i]));
         }
         spi.transmit(0x00); // Space between characters
-}
+    }
 
     spi.slave_deselect(&PORTB, DISPLAY_CS);
 }

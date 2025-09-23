@@ -40,7 +40,7 @@ int main() {
      */
 
     menu.init();
-    menu.show(mainMenu);
+    menu.show(&mainMenu);
     
     // oled.clear();
     // //oled.draw_pixel(30, 30, 1);
