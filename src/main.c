@@ -30,22 +30,32 @@ int main() {
 
     _delay_ms(1000);
 
-    /* 
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.setPin(&PORTB, DISPLAY_DC); // Command mode
-    spi.transmit(0xa6);
-    _delay_ms(1000);
-    spi.transmit(0xa7);
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
-     */
+    //menu.init();
+    //menu.show(&mainMenu);
+    
+
+    //oled.clear();
+    //oled.circle(6, 30, 10);
+    oled.sram_init();
+    oled.sram_flush();
 
     menu.init();
     menu.show(&mainMenu);
-    
-    //pong();
-    // etch_a_sketch();
-    //oled.clear();
-    //oled.circle(6, 30, 10);
+    //etch_a_sketch();
+
+/*     int j = 0;
+    while(true){
+        oled.draw_pixel(10, 10);
+        oled.draw_square(20, 20, 5);
+        oled.line(30, 30, 100, 30);
+        oled.circle(50 + j, 50, 10);
+
+        oled.sram_swap();
+        oled.sram_flush();
+        _delay_ms(1000);
+
+        j++;
+    } */
     
 
     

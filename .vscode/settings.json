@@ -1,6 +1,9 @@
 {
     "makefile.configureOnOpen": true,
     "files.associations": {
-        "menu.h": "c"
+        "menu.h": "c",
+        "gpio.h": "c",
+        "fonts.h": "c",
+        "oled.h": "c"
     }
 }

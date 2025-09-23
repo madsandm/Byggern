@@ -4,6 +4,7 @@
 #include "utilities.h"
 #include <avr/io.h>
 #include "fonts.h"
+#include "drivers/sram.h"
 
 static void oled_init() {
     GPIO.initPin(&DDRB, DISPLAY_CS, OUTPUT);
@@ -43,155 +44,133 @@ static void oled_init() {
     GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
 }
 
-static void oled_clear() {
+static void oled_sram_init() {
+    fb.front = FB1_BASE;
+    fb.back = FB2_BASE;
+    for (uint16_t i = 0; i < FRAMEBUFFER_SIZE; i++) {
+        fb.back[i / 128][i % 128] = 0x00;
+        fb.front[i / 128][i % 128] = 0x00;
+    }
+}
+
+static void oled_sram_flush() {
     spi.slave_select(&PORTB, DISPLAY_CS);
     for (uint8_t page = 0; page < 8; page++) {
 
         GPIO.clearPin(&PORTB, DISPLAY_DC);  // Command mode
         spi.transmit(0xb0 + page);          // Set page address
-        // spi.transmit(0x0 + (seg & 0x0f));   // Set lower column address
-        // spi.transmit(0x10 + (seg >> 4));    // Set higher column address
         spi.transmit(0x00);
         spi.transmit(0x10);
         GPIO.setPin(&PORTB, DISPLAY_DC);    // Data mode
-
         for (uint8_t seg = 0; seg < 128; seg++) {
-            spi.transmit(0);
+            spi.transmit(fb.front[page][seg]);
         }
     }
     spi.slave_deselect(&PORTB, DISPLAY_CS);
 }
 
+static void oled_sram_swap() {
+    fb.front = (fb.front == FB1_BASE) ? FB2_BASE : FB1_BASE;
+    fb.back = (fb.back == FB1_BASE) ? FB2_BASE : FB1_BASE;
+}
+
+static void oled_present() {
+    oled_sram_swap();
+    memcpy(fb.back, fb.front, FRAMEBUFFER_SIZE);
+    oled_sram_flush();
+}
+
+static void oled_clear() {
+    for (uint8_t page = 0; page < 8; page++) {
+        for (uint8_t seg = 0; seg < 128; seg++) {
+            fb.back[page][seg] = 0x00;
+        }
+    }
+}
+
 static void oled_home() {
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.clearPin(&PORTB, DISPLAY_DC); // Command mode
-    spi.transmit(0xb0);
-    spi.transmit(0x0);
-    spi.transmit(0x10);
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
+    fb.cursor_x = 0;
+    fb.cursor_y = 0;
 }
 
 static void oled_goto_line(uint8_t line) {
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.clearPin(&PORTB, DISPLAY_DC); // Command mode
-    spi.transmit(0xb0 + line);
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
+    if (line >= 8) return; // Out of bounds
+    fb.cursor_x = 0;
+    fb.cursor_y = line * 8;
 }
 
 static void oled_clear_line(uint8_t line) {
     if (line >= 8) return; // Out of bounds
-
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.clearPin(&PORTB, DISPLAY_DC); // Command mode
-    spi.transmit(0xb0 + line); // Set page address
-    spi.transmit(0x0);         // Set lower column address
-    spi.transmit(0x10);        // Set higher column address
-
-    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-
     for (uint8_t seg = 0; seg < 128; seg++) {
-        spi.transmit(0x00);
+        fb.back[line][seg] = 0x00;
     }
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
 }
 
 static void oled_pos(uint8_t row, uint8_t col) {
     if (row >= 64 || col >= 128) return; // Out of bounds
-
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.clearPin(&PORTB, DISPLAY_DC);   // Command mode
-    spi.transmit(0xb0 + (row / 8));      // Set page address
-    spi.transmit(0x00 + (col & 0x0f));   // Set lower column
-    spi.transmit(0x10 + (col >> 4));     // Set higher column address
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
+    if (row < 0 || col < 0) return;      // Out of bounds
+    fb.cursor_x = col;
+    fb.cursor_y = row;
 }
-
+    
 static void oled_print(char* str) {
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-
     while (*str) {
-        char c = *str++;
-        if (c < 0x20 || c > 0x7E) c = '?'; // Replace unsupported characters
-        for (uint8_t i = 0; i < 4; i++) {
-            spi.transmit(pgm_read_byte(&font4[c - 0x20][i]));
+        if (*str < 32 || *str > 126) {
+            str++;
+            continue; // Skip unsupported characters
         }
-        spi.transmit(0x00); // Space between characters
+        if (fb.cursor_x + 4 >= 128) { // Wrap to next line if needed
+            fb.cursor_x = 0;
+            fb.cursor_y += 8;
+            if (fb.cursor_y >= 64) {
+                fb.cursor_y = 0; // Wrap to top if needed
+            }
+        }
+        uint8_t char_index = *str - 32;
+        for (uint8_t i = 0; i < 4; i++) {
+            fb.back[fb.cursor_y / 8][fb.cursor_x + i] = pgm_read_byte(&font4[char_index][i]);
+        }
+        fb.cursor_x += 4; // Move cursor forward
+        str++;
     }
-
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
 }
 
 static void oled_draw_pixel(uint8_t x, uint8_t y) {
     if (x >= 128 || y >= 64) return; // Out of bounds
-
-    oled.pos(y, x);
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-    spi.transmit(1 << (y % 8));
-    spi.slave_deselect(&PORTB, DISPLAY_CS);
+    fb.back[y / 8][x] |= (1 << (y % 8));
 }
 
 static void oled_draw_square(uint8_t x, uint8_t y, uint8_t size) {
-    if (x >= 128 || y >= 64 || size == 0 || size > 8) return; // Out of bounds or invalid size
-    //if (x + size > 128) size = 128 - x; // Adjust size if it exceeds display width
-    //if (y + size > 64) size = 64 - y;   // Adjust size if it exceeds display height
-
-    oled.pos(y, x);
-    spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
     for (uint8_t i = 0; i < size; i++) {
-        spi.transmit(pgm_read_byte(&squares[size - 1][i]));
+        for (uint8_t j = 0; j < size; j++) {
+            oled_draw_pixel(x + i, y + j);
+        }
     }
-    spi.slave_deselect(&PORTB, DISPLAY_CS); 
 }
 
 static void oled_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
     int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
-    int dy = abs(y2 - y1), sy = y1 < y2 ? 1 : -1; 
-    int err = (dx>dy ? dx : -dy)/2, e2;
-
-    for(;;){
-        // Set pixel (x1, y1)
-        oled_pos(y1 / 8, x1);
-        spi.slave_select(&PORTB, DISPLAY_CS);
-        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-        spi.transmit(1 << (y1 % 8));
-        spi.slave_deselect(&PORTB, DISPLAY_CS);
-        if (x1==x2 && y1==y2) break;
-        e2 = err;
-        if (e2 > -dx) { err -= dy; x1 += sx;
-        }
-        if (e2 < dy) { err += dx; y1 += sy; }
+    int dy = -abs(y2 - y1), sy = y1 < y2 ? 1 : -1; 
+    int err = dx + dy, e2; /* error value e_xy */
+    while (1) {
+        oled_draw_pixel(x1, y1);
+        if (x1 == x2 && y1 == y2) break;
+        e2 = 2 * err;
+        if (e2 >= dy) { err += dy; x1 += sx; } /* e_xy+e_x > 0 */
+        if (e2 <= dx) { err += dx; y1 += sy; } /* e_xy+e_y < 0 */
     }
 }
 
 static void oled_circle(int xm, int ym, int r) {
-    int x = -r, y = 0, err = 2-2*r; /* II. Quadrant */
+    int x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */
     do {
-        oled_pos((ym + y) / 8, xm - x);
-        spi.slave_select(&PORTB, DISPLAY_CS);
-        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-        spi.transmit(1 << ((ym + y) % 8));
-        spi.slave_deselect(&PORTB, DISPLAY_CS);
-        oled_pos((ym - y) / 8, xm + x);
-        spi.slave_select(&PORTB, DISPLAY_CS);
-        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-        spi.transmit(1 << ((ym - y) % 8));
-        spi.slave_deselect(&PORTB, DISPLAY_CS);
-        oled_pos((ym + x) / 8, xm + y);
-        spi.slave_select(&PORTB, DISPLAY_CS);
-        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-        spi.transmit(1 << ((ym + x) % 8));
-        spi.slave_deselect(&PORTB, DISPLAY_CS);
-        oled_pos((ym - x) / 8, xm - y);
-        spi.slave_select(&PORTB, DISPLAY_CS);
-        GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
-        spi.transmit(1 << ((ym - x) % 8));
-        spi.slave_deselect(&PORTB, DISPLAY_CS);
+        oled_draw_pixel(xm - x, ym + y); /*   I. Quadrant */
+        oled_draw_pixel(xm - y, ym - x); /*  II. Quadrant */
+        oled_draw_pixel(xm + x, ym - y); /* III. Quadrant */
+        oled_draw_pixel(xm + y, ym + x); /*  IV. Quadrant */
         r = err;
-        if (r > x) err += ++x*2+1;   /* err_x */
-        if (r <= y) err += ++y*2+1; /* err_y */
+        if (r > x) err += ++x * 2 + 1;   /* e_xy+e_x > 0 */
+        if (r <= y) err += ++y * 2 + 1;  /* e_xy+e_y < 0 */
     } while (x < 0);
 }
 
@@ -206,5 +185,11 @@ IOLED oled = {
     .draw_pixel = oled_draw_pixel,
     .draw_square = oled_draw_square,
     .line = oled_line,
-    .circle = oled_circle
+    .circle = oled_circle,
+
+    // SRAM buffer functions
+    .sram_init = oled_sram_init,
+    .sram_flush = oled_sram_flush,
+    .sram_swap = oled_sram_swap,
+    .present = oled_present
 };
