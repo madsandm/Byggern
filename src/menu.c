@@ -2,6 +2,8 @@
 #include "drivers/oled.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include "drivers/io.h"
 
 IMenuItem mainMenu = {
     .name = "Main Menu",
