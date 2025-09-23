@@ -69,7 +69,7 @@ void etch_a_sketch() {
         oled.pos(row, col);
         oled.draw_square(col, row, 8);
         _delay_us(100);
-        if (io.read_buttons(0)) {
+        if (io.read_buttons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }
     }
@@ -98,7 +98,7 @@ void pong() {
         oled.line(1, paddle1_y-4, 1, paddle1_y + 3);
         oled.line(126, paddle2_y-4, 126, paddle2_y + 3);
         oled.line(127, paddle2_y-4, 127, paddle2_y + 3);
-        oled.draw_square(ball_x, ball_y, 2);
+        oled.draw_square(ball_x, ball_y, 4);
 
         // Update ball position
         ball_x += ball_dx;
@@ -110,6 +110,9 @@ void pong() {
 
         _delay_ms(100);
         oled.clear();
+        if (io.read_buttons(0) & (1 << 5)) {
+            break; // Exit the loop if button 0 is pressed
+        }
     }
 }
 

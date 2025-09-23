@@ -57,9 +57,10 @@ static void menu_init() {
 
     IMenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
     menu_addItem(gameMenu, "Snake");
-    menu_addItem(gameMenu, "Pong");
+    IMenuItem* pong_game = menu_addItem(gameMenu, "Pong");
 
     etchASketch->entryPoint = etch_a_sketch;
+    pong_game->entryPoint = pong;
 
     menu_addItem(documentItem, "Epstein files");
 }
