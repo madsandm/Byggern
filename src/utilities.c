@@ -7,6 +7,7 @@
 #include "drivers/gpio.h"
 #include "drivers/io.h"
 #include "drivers/oled.h"
+#include <stdlib.h>
 
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
@@ -80,7 +81,7 @@ void pong() {
     uint8_t ball_x = 64;
     uint8_t ball_y = 32;
     int8_t ball_dx = 4;
-    int8_t ball_dy = 1;
+    int8_t ball_dy = 2;
     uint8_t paddle1_y = 28;
     uint8_t paddle2_y = 28;
     uint8_t score1 = 0;
@@ -88,25 +89,72 @@ void pong() {
     oled.clear();
 
     while (true) {
+        // Display scores
+        oled.pos(0, 50);
+
+        oled.print(itoa(score1, NULL, 10));
+        oled.print(" - ");
+        oled.print(itoa(score2, NULL, 10));
 
         // Read joystick positions to move paddles
         paddle1_y = (256 - io.read_joystick(1)) * 8 / 32;
         paddle2_y = (256 - io.read_touchpad(1)) * 8 / 32;
 
         //draw paddles and ball
-        oled.line(0, paddle1_y-4, 0, paddle1_y + 3);
-        oled.line(1, paddle1_y-4, 1, paddle1_y + 3);
-        oled.line(126, paddle2_y-4, 126, paddle2_y + 3);
-        oled.line(127, paddle2_y-4, 127, paddle2_y + 3);
+        oled.draw_square(0, paddle1_y, 8);
+        oled.draw_square(0, paddle1_y + 8, 8);
+        oled.draw_square(120, paddle2_y, 8);
+        oled.draw_square(120, paddle2_y + 8, 8);
         oled.draw_square(ball_x, ball_y, 4);
 
         // Update ball position
         ball_x += ball_dx;
         ball_y += ball_dy;
 
-        // Check for collisions with walls
-        if (ball_x == 0 || ball_x >= 127) ball_dx = -ball_dx;
-        if (ball_y == 0 || ball_y >= 63) ball_dy = -ball_dy;
+
+        // Check for collisions with paddles
+        if (ball_x <= 8 && ball_y >= paddle1_y && ball_y <= paddle1_y + 16) {
+            ball_dx = -ball_dx;
+            ball_x = 8; // Prevent sticking to paddle
+        }
+        if (ball_x >= 116 && ball_y >= paddle2_y && ball_y <= paddle2_y + 16) {
+            ball_dx = -ball_dx;
+            ball_x = 116; // Prevent sticking to paddle
+        }
+
+        // Check for scoring
+        if (ball_x <= 1) {
+            score2++;
+            ball_x = 64;
+            ball_y = 32;
+            ball_dx = -ball_dx; // Change direction
+            ball_dy = TCNT1 % 5 - 5; // Randomize vertical direction
+        }
+        if (ball_x >= 123) {
+            score1++;
+            ball_x = 64;
+            ball_y = 32;
+            ball_dx = -ball_dx; // Change direction
+            ball_dy = TCNT1 % 5 - 5; // Randomize vertical direction
+        }
+
+        // Check for collisions with top and bottom walls
+        if (ball_y <= 0 || ball_y >= 60) {
+            ball_dy = -ball_dy;
+        }
+
+        // Game over
+        if (score1 >= 5 || score2 >= 5) {
+            oled.clear();
+            oled.pos(24, 32);
+            if (score1 >= 5) {
+                oled.print("Player 1 Wins!");
+            } else {
+                oled.print("Player 2 Wins!");
+            }
+            _delay_ms(4000);
+            break;
+        }
 
         _delay_ms(100);
         oled.clear();
