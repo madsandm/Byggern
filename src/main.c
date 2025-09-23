@@ -51,6 +51,11 @@ int main() {
     // uint8_t row = 0;
     // uint8_t col = 0;
     // etch_a_sketch();
+    // oled.clear();
+    //oled.draw_square(30, 30, 8);
+
+    //pong();
+    // etch_a_sketch();
     //oled.clear();
     //oled.circle(6, 30, 10);
     

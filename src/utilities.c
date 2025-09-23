@@ -62,14 +62,50 @@ void etch_a_sketch() {
         }
         uint8_t x = io.read_touchpad(0);
         uint8_t y = io.read_touchpad(1);
-        printf("Touchpad X, Y: %d, %d\n", x, y);
-        uint8_t row = ((256 - y) * 8) / 256;
+        uint8_t row = ((256 - y) * 8) / 32;
         uint8_t col = (x * 128) / 256;
-        if (row > 7) row = 7;
         if (col > 127) col = 127;
         oled.pos(row, col);
-        oled.draw_square(col, row, 2);
+        oled.draw_square(col, row, 8);
         _delay_us(100);
+    }
+}
+
+void pong() {
+    // Implement a simple Pong game here
+    uint8_t ball_x = 64;
+    uint8_t ball_y = 32;
+    int8_t ball_dx = 4;
+    int8_t ball_dy = 1;
+    uint8_t paddle1_y = 28;
+    uint8_t paddle2_y = 28;
+    uint8_t score1 = 0;
+    uint8_t score2 = 0;
+    oled.clear();
+
+    while (true) {
+
+        // Read joystick positions to move paddles
+        paddle1_y = (256 - io.read_joystick(1)) * 8 / 32;
+        paddle2_y = (256 - io.read_touchpad(1)) * 8 / 32;
+
+        //draw paddles and ball
+        oled.line(0, paddle1_y-4, 0, paddle1_y + 3);
+        oled.line(1, paddle1_y-4, 1, paddle1_y + 3);
+        oled.line(126, paddle2_y-4, 126, paddle2_y + 3);
+        oled.line(127, paddle2_y-4, 127, paddle2_y + 3);
+        oled.draw_square(ball_x, ball_y, 2);
+
+        // Update ball position
+        ball_x += ball_dx;
+        ball_y += ball_dy;
+
+        // Check for collisions with walls
+        if (ball_x == 0 || ball_x >= 127) ball_dx = -ball_dx;
+        if (ball_y == 0 || ball_y >= 63) ball_dy = -ball_dy;
+
+        _delay_ms(100);
+        oled.clear();
     }
 }
 
