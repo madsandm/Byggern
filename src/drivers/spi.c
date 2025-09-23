@@ -3,7 +3,7 @@
 #include <avr/io.h>
 
 static void spi_init() {
-    DDRB = (1 << DDB5) | (1 << DDB7); // Set SCK and MOSI as output;
+    DDRB |= (1 << DDB5) | (1 << DDB7); // Set SCK and MOSI as output;
     GPIO.initPin(&DDRB, DDB4, OUTPUT); // Set SS1 as output before enabling SPI
     GPIO.initPin(&DDRB, DDB1, OUTPUT); // Set SS2 as output
     

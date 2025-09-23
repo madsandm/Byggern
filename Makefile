@@ -43,6 +43,9 @@ flash: $(BUILD_DIR)/main.hex
 clean:
 	rm -rf $(BUILD_DIR)
 
+.PHONY: go
+go: clean flash
+
 .PHONY: erase
 erase:
 	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -e

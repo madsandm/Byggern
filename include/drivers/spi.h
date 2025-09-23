@@ -1,6 +1,8 @@
 #ifndef SPI_H
 #define SPI_H
 
+#define IO_BOARD_CS PB4
+
 #include <stdint.h>
 
 typedef struct {
