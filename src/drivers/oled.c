@@ -1,6 +1,7 @@
 #include "drivers/oled.h"
 #include "drivers/spi.h"
 #include "drivers/gpio.h"
+#include "utilities.h"
 #include <avr/io.h>
 
 static void oled_init() {
@@ -41,6 +42,7 @@ static void oled_clear() {
         spi.slave_select(&PORTB, DISPLAY_CS);
         GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
         spi.transmit(0xb0 + page); // Set page address
+        spi.transmit(0x0);
         GPIO.clearPin(&PORTB, DISPLAY_DC); // Command mode
         spi.slave_deselect(&PORTB, DISPLAY_CS);
     }

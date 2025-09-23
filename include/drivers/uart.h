@@ -7,6 +7,7 @@
 #define MY_UBRR FOSC/16/BAUD-1
 #define RX_BUFFER_SIZE 32
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -16,6 +17,7 @@ typedef struct {
     int (*write)(const char data);
     char (*read)();
     bool (*available)();
+    FILE* stream;
 } IUART;
 
 IUART uart;

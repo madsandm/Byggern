@@ -52,3 +52,7 @@ void test_latch(){
 
     printf("\nLatch test completed.\n");
 }
+
+void send_data(FILE* stream, const char* data, size_t size) {
+    fwrite(data, 1, size, stream);
+}

@@ -15,8 +15,9 @@ static int uart_transmit(const char data) {
     return 0;
 }
 
-static int uart_transmit_with_stream(const char data, FILE *stream) {
+static int uart_putchar(const char data, FILE *stream) {
     uart_transmit(data);
+    return 0;
 }
 
 /**
@@ -35,7 +36,7 @@ static void uart_init(const int ubbr, const bool enablePrintf) {
     UCSR0C = (1 << URSEL0) | (0 << USBS0) | (3 << UCSZ00);
 
     if (enablePrintf) {
-        fdevopen(&uart_transmit_with_stream, NULL);
+        fdevopen(&uart_putchar, NULL);
     }
 }
 
@@ -70,10 +71,14 @@ static void uart_println(const char* str) {
     printf("%s\n", str);
 }
 
+FILE uart_stream = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
+
 IUART uart = {
     .init = uart_init,
     .println = uart_println,
     .write = uart_transmit,
     .available = uart_data_available,
-    .read = uart_read
+    .read = uart_read,
+    .stream = &uart_stream
 };
+

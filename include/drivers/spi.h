@@ -3,15 +3,17 @@
 
 #define IO_BOARD_CS PB4
 
+#include <stdio.h>
 #include <stdint.h>
 
 typedef struct {
     void (*init)();
-    void (*transmit)(uint8_t data);
+    void (*transmit)(char data);
     char (*receive)();
     void (*transmit_receive)(char* data);
-    void (*slave_select)(uint8_t port, uint8_t pin);
-    void (*slave_deselect)(uint8_t port, uint8_t pin);
+    void (*slave_select)(volatile uint8_t* port, uint8_t pin);
+    void (*slave_deselect)(volatile uint8_t* port, uint8_t pin);
+    FILE* stream;
 } ISPI;
 
 ISPI spi;
