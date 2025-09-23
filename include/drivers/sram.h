@@ -11,6 +11,8 @@ typedef struct {
     const uint16_t size;
     void (*init)();
     void (*test)();
+    void* (*malloc)(const size_t size);
+    void* (*realloc)(const void* ptr, const size_t size);
 } ISRAM;
 
 ISRAM sram;

@@ -7,18 +7,11 @@
 #include "drivers/joystick.h"
 #include <util/delay.h>
 #include "utilities.h"
-
-IMenuItem mainMenu = {
-    .name = "Main Menu",
-    .numberOfChildren = 0,
-    .children = NULL,
-    .entryPoint = NULL,
-    .parent = NULL,
-};
+#include "drivers/sram.h"
 
 static int8_t menu_currentSelection = 0;
 
-static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
+static void menu_addChild(MenuItem* parent, MenuItem* child) {
     if (child->parent != NULL) {
         // TODO: Handle
     }
@@ -26,7 +19,7 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
     child->parent = parent;
     parent->numberOfChildren++;
 
-    IMenuItem** newChildren = realloc(parent->children, parent->numberOfChildren * sizeof(IMenuItem*));
+    MenuItem** newChildren = sram.realloc(parent->children, parent->numberOfChildren * sizeof(MenuItem*));
     if (newChildren) {
         parent->children = newChildren;
     } else {
@@ -36,35 +29,54 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
     parent->children[parent->numberOfChildren - 1] = child;
 }
 
-static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
-    IMenuItem* item = malloc(sizeof(IMenuItem));
+static char* copyString(char* str) {
+    size_t len = strlen(str);
+    char* mem = sram.malloc(len + 1);
+    return strcpy(mem, str);
+}
+
+static MenuItem* menu_createItem(char* name) {
+    MenuItem* item = sram.malloc(sizeof(MenuItem));
     if (item == NULL) {
         printf("COULD NOT ALLOCATE MEMORY\n");
     }
-    item->name = strdup(name);
+    item->name = copyString(name);
     item->entryPoint = NULL;
     item->children = NULL;
     item->numberOfChildren = 0;
     item->parent = NULL;
+    return item;
+}
+
+static MenuItem* menu_addItem(MenuItem* parent, char* name) {
+    MenuItem* item = menu_createItem(name);
     menu_addChild(parent, item);
     return item;
 }
 
 static void menu_init() {
-    IMenuItem* gameMenu = menu_addItem(&mainMenu, "Games");
-    IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
-    IMenuItem* music = menu_addItem(&mainMenu, "Music");
+    mainMenu = menu_createItem("Main Menu");
 
-    IMenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
+    MenuItem* gameMenu = menu_addItem(mainMenu, "Games");
+    MenuItem* documentItem = menu_addItem(mainMenu, "Documents");
+    MenuItem* music = menu_addItem(mainMenu, "Music");
+
+    MenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
     menu_addItem(gameMenu, "Snake");
     menu_addItem(gameMenu, "Pong");
 
     etchASketch->entryPoint = etch_a_sketch;
 
     menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
 }
 
-static void menu_render(IMenuItem* menuItem) {
+static void menu_render(MenuItem* menuItem) {
     oled.clear();
     oled.pos(0, 32);
     oled.print(menuItem->name);
@@ -81,8 +93,8 @@ static void menu_render(IMenuItem* menuItem) {
     }
 }
 
-static void menu_show(IMenuItem* menuItem) {
-    IMenuItem* currentMenu = menuItem;
+static void menu_show(MenuItem* menuItem) {
+    MenuItem* currentMenu = menuItem;
     menu_render(currentMenu);
 
     DeviceDirection lastDirection = NEUTRAL;
@@ -102,7 +114,7 @@ static void menu_show(IMenuItem* menuItem) {
             }
 
             if (direction == RIGHT) {
-                IMenuItem* entering = currentMenu->children[menu_currentSelection];
+                MenuItem* entering = currentMenu->children[menu_currentSelection];
                 if (entering->numberOfChildren == 0) {
                     if (entering->entryPoint != NULL) {
                         entering->entryPoint();
@@ -116,7 +128,7 @@ static void menu_show(IMenuItem* menuItem) {
             }
 
             if (direction == LEFT) {
-                IMenuItem* parent = currentMenu->parent;
+                MenuItem* parent = currentMenu->parent;
                 if (parent != NULL) {
                     currentMenu = parent;
                     menu_currentSelection = 0;

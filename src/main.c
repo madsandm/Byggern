@@ -18,11 +18,14 @@ int main() {
     adc.init();
     spi.init();
     oled.init();
+    menu.init();
 
     // Enable interrupts
     sei();
 
     printf("System initialized.\n");
+
+    menu.show(mainMenu);
 
     //adc.printChannels();
 
@@ -39,8 +42,8 @@ int main() {
     spi.slave_deselect(&PORTB, DISPLAY_CS);
      */
 
-    menu.init();
-    menu.show(&mainMenu);
+    // menu.init();
+    // menu.show(&mainMenu);
     
     //pong();
     // etch_a_sketch();

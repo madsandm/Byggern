@@ -4,19 +4,19 @@
 #include <stdint.h>
 #include <string.h>
 
-typedef struct IMenuItem {
+typedef struct MenuItem {
     char* name;
     uint8_t numberOfChildren;
-    struct IMenuItem** children;
-    struct IMenuItem* parent;
+    struct MenuItem** children;
+    struct MenuItem* parent;
     void (*entryPoint)();
-} IMenuItem;
+} MenuItem;
 
-IMenuItem mainMenu;
+MenuItem* mainMenu;
 
 typedef struct {
     void (*init)();
-    void (*show)(IMenuItem* menuItem);
+    void (*show)(MenuItem* menuItem);
 } IMenu;
 
 IMenu menu;

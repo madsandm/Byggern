@@ -40,9 +40,26 @@ static void SRAM_test() {
     printf("SRAM test completed with %d write errors and %d retrieval errors\n", write_errors, retrieval_errors);
 }
 
+size_t lastAllocation = EXTERNAL_RAM_ADDRESS;
+static void* SRAM_malloc(const size_t size) {
+    if (lastAllocation + size > EXTERNAL_RAM_ADDRESS + EXTERNAL_RAM_SIZE) {
+        printf("FAILED TO ALLOCATE SRAM\n");
+        return NULL;
+    }
+    size_t lastAllocation;
+    lastAllocation += size;
+    return (void*)lastAllocation;
+}
+
+static void* SRAM_realloc(const void* ptr, const size_t size) {
+    return SRAM_malloc(size);
+}
+
 ISRAM sram = {
     .data = (char*)EXTERNAL_RAM_ADDRESS,
     .size = EXTERNAL_RAM_SIZE,
     .init = SRAM_init,
-    .test = SRAM_test
+    .test = SRAM_test,
+    .malloc = SRAM_malloc,
+    .realloc = SRAM_realloc
 };

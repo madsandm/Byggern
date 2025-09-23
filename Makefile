@@ -17,6 +17,8 @@ TARGET_DEVICE := m162
 
 CC := avr-gcc
 CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -Iinclude
+#CFLAGS += -Wl,--defsym=__heap_start=0x801400,--defsym=__heap_end=0x801FFF,--verbose
+#CFLAGS += -Wl,--gc-sections,--print-gc-sections
 
 OBJECT_FILES := $(patsubst $(SOURCE_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 OBJ_DIRS := $(sort $(dir $(OBJECT_FILES)))
