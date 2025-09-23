@@ -106,6 +106,7 @@ static void menu_show(IMenuItem* menuItem) {
                 if (entering->numberOfChildren == 0) {
                     if (entering->entryPoint != NULL) {
                         entering->entryPoint();
+                        menu_render(currentMenu);
                     }
                 } else {
                     currentMenu = entering;

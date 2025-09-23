@@ -56,6 +56,7 @@ void test_latch(){
 }
 
 void etch_a_sketch() {
+    oled.clear();
     while (true) {
         if (io.read_buttons(2)) {
             oled.clear();
@@ -68,6 +69,9 @@ void etch_a_sketch() {
         oled.pos(row, col);
         oled.draw_square(col, row, 8);
         _delay_us(100);
+        if (io.read_buttons(0)) {
+            break; // Exit the loop if button 0 is pressed
+        }
     }
 }
 
