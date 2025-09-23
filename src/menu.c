@@ -52,14 +52,16 @@ static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
 
 static void menu_init() {
     IMenuItem* gameMenu = menu_addItem(&mainMenu, "Games");
-    menu_addItem(&mainMenu, "Documents");
-    menu_addItem(&mainMenu, "Music");
+    IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
+    IMenuItem* music = menu_addItem(&mainMenu, "Music");
 
     IMenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
     menu_addItem(gameMenu, "Snake");
     menu_addItem(gameMenu, "Pong");
 
     etchASketch->entryPoint = etch_a_sketch;
+
+    menu_addItem(documentItem, "Epstein files");
 }
 
 static void menu_render(IMenuItem* menuItem) {
@@ -67,7 +69,7 @@ static void menu_render(IMenuItem* menuItem) {
     oled.pos(0, 32);
     oled.print(menuItem->name);
     for (uint8_t i = 0; i < menuItem->numberOfChildren; i++) {
-        oled.pos(i + 1, 0);
+        oled.pos((i + 1) * 8, 0);
 
         if (menu_currentSelection == i) {
             oled.print(">");
