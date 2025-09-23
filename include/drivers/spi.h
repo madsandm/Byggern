@@ -1,6 +1,7 @@
 #ifndef SPI_H
 #define SPI_H
 
+#include <stdio.h>
 #include <stdint.h>
 
 typedef struct {
@@ -8,8 +9,9 @@ typedef struct {
     void (*transmit)(uint8_t data);
     char (*receive)();
     void (*transmit_receive)(char* data);
-    void (*slave_select)(uint8_t port, uint8_t pin);
-    void (*slave_deselect)(uint8_t port, uint8_t pin);
+    void (*slave_select)(volatile uint8_t* port, uint8_t pin);
+    void (*slave_deselect)(volatile uint8_t* port, uint8_t pin);
+    FILE* stream;
 } ISPI;
 
 ISPI spi;
