@@ -52,7 +52,15 @@ static void* SRAM_malloc(const size_t size) {
 }
 
 static void* SRAM_realloc(const void* ptr, const size_t size) {
-    return SRAM_malloc(size);
+    void* newAllocation = SRAM_malloc(size);
+    char* dest = (char*)newAllocation;
+    char* src = (char*)ptr;
+
+    for (size_t i = 0; i < size; i++) {
+        dest[i] = src[i];
+    }
+
+    return newAllocation;
 }
 
 ISRAM sram = {
