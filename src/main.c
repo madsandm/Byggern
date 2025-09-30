@@ -10,6 +10,7 @@
 #include "drivers/joystick.h"
 #include "drivers/spi.h"
 #include "drivers/oled.h"
+#include "drivers/mcp2515.h"
 #include "menu.h"
 
 int main() {
@@ -18,6 +19,7 @@ int main() {
     adc.init();
     spi.init();
     oled.init();
+    mcp2515.reset();
 
     // Enable interrupts
     sei();
