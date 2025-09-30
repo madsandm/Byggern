@@ -27,14 +27,7 @@ int main() {
 
     printf("System initialized.\n");
 
-    mcp2515.reset();
-    _delay_ms(10);
-    mcp2515.dump_memory();
-
-    uint8_t data[] = {
-        'A',
-        'B'
-    };
+    char data[] = "Hello!";
 
     while (true) {
         canbus.transmit((CanbusPacket){
@@ -43,10 +36,15 @@ int main() {
             .size = sizeof(data)
         });
 
-        mcp2515.dump_memory();
-        printf("Packet sent\n");
+        CanbusPacket response = canbus.receive();
+        printf("ID: %d, Size: %d, data: ", response.id, response.size);
+        for (char i = 0; i < response.size; i++) {
+            printf("%c", response.data[i]);
+        }
+        printf("\n");
+        free(response.data);
 
-        _delay_ms(100);
+        _delay_ms(1000);
     }
 
     while(true);

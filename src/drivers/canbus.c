@@ -13,8 +13,8 @@ static void canbus_init() {
     mcp2515.bit_modify(RXB0 | TXBnCTRL, 0b01100100, 0b01100000); // Accept all, without rollover
 
     // Enter desired mode
-    // mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
-    mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
+    mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
+    //mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
 }
 
 static void canbus_transmit(CanbusPacket packet) {
@@ -41,20 +41,18 @@ static void canbus_transmit(CanbusPacket packet) {
 }
 
 static CanbusPacket canbus_receive() {
-    uint8_t* header = mcp2515.read(RXB0 | TXBnSIDH, 10);
-    uint16_t id = header[0];
-    id = (id << 3) | (header[1] >> 5);
+    uint8_t* frame = mcp2515.read(RXB0 | TXBnSIDH, 13);
 
-    for (char i = 0; i < 10; i++) {
-        printf("%x ", header[i]);
+    uint16_t id = frame[0];
+    id = (id << 3) | (frame[1] >> 5);
+
+    uint8_t size = frame[4] & 0x0F;
+    uint8_t* data = malloc(size);
+    for (uint8_t i = 0; i < size; i++) {
+        data[i] = frame[5 + i];
     }
-    printf("\n");
 
-    printf("Receve %d = %x\n", header[4], header[4]);
-
-    uint8_t size = header[4] & 0b111;
-    free(header);
-    uint8_t* data = mcp2515.read(RXB0 | TXBnD0, size);
+    free(frame);
 
     return (CanbusPacket){
         .id = id,
