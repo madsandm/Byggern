@@ -28,11 +28,7 @@ int main() {
 
     //ioGrid.calibrate(touchpad);
 
-    _delay_ms(1000);
-
-    //menu.init();
-    //menu.show(&mainMenu);
-    
+    _delay_ms(1000);    
 
     //oled.clear();
     //oled.circle(6, 30, 10);
