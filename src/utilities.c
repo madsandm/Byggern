@@ -68,11 +68,12 @@ void etch_a_sketch() {
         uint8_t col = (x * 128) / 256;
         if (col > 127) col = 127;
         oled.pos(row, col);
-        oled.draw_square(col, row, 8);
-        _delay_us(100);
+        oled.draw_square(col, row, 3);
+        _delay_us(10);
         if (io.read_buttons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }
+        oled.present();
     }
 }
 

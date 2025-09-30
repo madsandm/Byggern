@@ -80,6 +80,7 @@ static void menu_render(IMenuItem* menuItem) {
 
         oled.print(menuItem->children[i]->name);
     }
+    oled.present();
 }
 
 static void menu_show(IMenuItem* menuItem) {
