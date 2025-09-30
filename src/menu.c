@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "drivers/joystick.h"
-#include <util/delay.h>
 #include "utilities.h"
+#include <util/delay.h>
 
 IMenuItem mainMenu = {
     .name = "Main Menu",

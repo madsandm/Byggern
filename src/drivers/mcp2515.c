@@ -31,10 +31,6 @@ static void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size) {
     spi.slave_deselect(MCP2515_SELECT_PINS);
 }
 
-static void mcp2515_write_single(uint8_t address, const uint8_t data) {
-    mcp2515_write(address, &data, 1);
-}
-
 static void mcp2515_reset() {
     GPIO.initPin(MCP2515_SELECT_PINS, OUTPUT);
     spi.slave_deselect(MCP2515_SELECT_PINS);
@@ -72,7 +68,7 @@ IMcp2515 mcp2515 = {
     .reset = mcp2515_reset,
     .read = mcp2515_read,
     .write = mcp2515_write,
-    .write_single = mcp2515_write_single,
     .read_status = mcp2515_read_status,
-    .bit_modify = mcp2515_bit_modify
+    .bit_modify = mcp2515_bit_modify,
+    .request_to_send = mcp2515_request_to_send
 };

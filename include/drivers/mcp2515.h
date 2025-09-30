@@ -26,11 +26,37 @@
 #define MCP2515_MODE_LISTENONLY 0b011
 #define MCP2515_MODE_CONFIG     0b100
 
+// Registers
+#define TXRTSCTRL 0x0d
+#define CANCTRL 0x0f
+#define CANINTE 0b00101011
+
+// CANINTE bit shifts
+#define RX0IE 0
+#define RX1IE 1
+#define TX0IE 2
+#define TX1IE 3
+#define TX2IE 4
+
+// Receive registers
+#define RXB0 0b01100000
+#define RXB1 0b01110000
+
+// Transmit registers
+#define TXB0 0b00110000
+#define TXB1 0b01000000
+#define TXB2 0b01010000
+
+#define TXBnCTRL 0
+#define TXBnSIDH 0b0001 // Standard identifier high
+#define TXBnSIDL 0b0010 // Standard identifier low
+#define TXBnDLC  0b0101 // Data length code
+#define TXBnD0   0b0110 // Transmit buffer data byte 0
+
 typedef struct {
     void (*reset)();
     uint8_t* (*read)(uint8_t address, uint8_t size);
     void (*write)(uint8_t address, const uint8_t* data, uint8_t size);
-    void (*write_single)(uint8_t address, const uint8_t data);
     /**
      * Buffers where the three LSB are used to select TXB2, TXB1, TXB0
      */
