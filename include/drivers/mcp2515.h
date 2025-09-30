@@ -3,8 +3,8 @@
 
 #include <avr/io.h>
 
-#define MCP2515_CS_PORT &DDRA
-#define MCP2515_CS 0
+#define MCP2515_CS_PORT &PORTB
+#define MCP2515_CS PB2
 #define MCP2515_SELECT_PINS MCP2515_CS_PORT, MCP2515_CS
 
 #define MCP2515_COMMAND_RESET        0b11000000
@@ -63,6 +63,7 @@ typedef struct {
     void (*request_to_send)(const uint8_t tx_buffers);
     uint8_t (*read_status)();
     void (*bit_modify)(const uint8_t address, uint8_t mask, const uint8_t data);
+    void (*dump_memory)();
 } IMcp2515;
 
 IMcp2515 mcp2515;

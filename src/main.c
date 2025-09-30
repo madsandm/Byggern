@@ -11,6 +11,7 @@
 #include "drivers/spi.h"
 #include "drivers/oled.h"
 #include "drivers/canbus.h"
+#include "drivers/mcp2515.h"
 #include "menu.h"
 
 int main() {
@@ -18,7 +19,7 @@ int main() {
     sram.init();
     adc.init();
     spi.init();
-    oled.init();
+    // oled.init();
     canbus.init();
 
     // Enable interrupts
@@ -26,23 +27,34 @@ int main() {
 
     printf("System initialized.\n");
 
+    mcp2515.reset();
+    _delay_ms(10);
+    mcp2515.dump_memory();
+
     uint8_t data[] = {
         'A',
         'B'
     };
 
-    canbus.transmit((CanbusPacket){
-        .id = 23,
-        .data = data,
-        .size = sizeof(data)
-    });
+    while (true) {
+        canbus.transmit((CanbusPacket){
+            .id = 13,
+            .data = data,
+            .size = sizeof(data)
+        });
 
-    printf("Packet sent\n");
+        mcp2515.dump_memory();
+        printf("Packet sent\n");
+
+        _delay_ms(100);
+    }
+
+    while(true);
 
     _delay_ms(1000);
 
     CanbusPacket response = canbus.receive();
-    printf("ID: %d, Size: %d, data: ");
+    printf("ID: %d, Size: %d, data: ", response.id, response.size);
     for (char i = 0; i < response.size; i++) {
         printf("%c", response.data[i]);
     }
