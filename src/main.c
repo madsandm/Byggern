@@ -10,6 +10,8 @@
 #include "drivers/joystick.h"
 #include "drivers/spi.h"
 #include "drivers/oled.h"
+#include "drivers/canbus.h"
+#include "drivers/mcp2515.h"
 #include "menu.h"
 
 int main() {
@@ -17,12 +19,46 @@ int main() {
     sram.init();
     adc.init();
     spi.init();
-    oled.init();
+    // oled.init();
+    canbus.init();
 
     // Enable interrupts
     sei();
 
     printf("System initialized.\n");
+
+    char data[] = "Hello!";
+
+    while (true) {
+        canbus.transmit((CanbusPacket){
+            .id = 13,
+            .data = data,
+            .size = sizeof(data)
+        });
+
+        CanbusPacket response = canbus.receive();
+        printf("ID: %d, Size: %d, data: ", response.id, response.size);
+        for (char i = 0; i < response.size; i++) {
+            printf("%c", response.data[i]);
+        }
+        printf("\n");
+        free(response.data);
+
+        _delay_ms(1000);
+    }
+
+    while(true);
+
+    _delay_ms(1000);
+
+    CanbusPacket response = canbus.receive();
+    printf("ID: %d, Size: %d, data: ", response.id, response.size);
+    for (char i = 0; i < response.size; i++) {
+        printf("%c", response.data[i]);
+    }
+    printf("\n");
+    free(response.data);
+    while (true);
 
     //adc.printChannels();
 

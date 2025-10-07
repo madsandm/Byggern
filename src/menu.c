@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "drivers/joystick.h"
+#include "utilities.h"
 #include <util/delay.h>
 
 IMenuItem mainMenu = {
