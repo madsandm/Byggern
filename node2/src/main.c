@@ -16,22 +16,36 @@
 
 int main()
 {
+    CanInit init = {
+        .phase2 = 4,  // Phase 2 segment
+        .propag = 4,  // Propagation time segment
+        .phase1 = 4,  // Phase 1 segment
+        .sjw = 4,     // Synchronization jump width
+        .brp = 8,     // Baud rate prescaler
+        .smp = 8      // Sampling mode
+    };
+    
     SystemInit();
     configure_uart();
-    can_init((CanInit){.brp = 7, .phase1 = 6, .phase2 = 1, .propag = 6}, 0); // 500 kbps at 84 MHz
-
+    //can_init(init, 0);
+    
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
-    //Uncomment after including uart above
-    //uart_init(/*cpufreq*/, /*baud*/);
-    //printf("Hello World\n\r");
 
 
     CanMsg msg;
     while (1)
     {
         /* code */
-        printf("Hello World\n\r");
+        //printf("Hello World\n\r");
+        //can_rx(&msg);
+        printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.length);
+        for (int i = 0; i < msg.length; i++)
+        {
+            printf(", %d", msg.byte[i]);
+        }
+        printf("\n\r");
+        for (int i = 0;i < 1000000;i++);
     }
     
 }
