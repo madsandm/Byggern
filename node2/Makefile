@@ -7,9 +7,10 @@ MCUTYPE = __SAM3X8E__
 # Do NOT use a backslash after the last file.
 SOURCE_FILES = \
 	$(BOOTUP) \
-	main.c \
+	src/main.c \
 	src/uart.c \
 	src/printf-stdarg.c \
+	src/can.c
 #   filename1.c \
 #   filename2.c \
 #	filenameN.c
@@ -28,7 +29,7 @@ ELF=$(BUILD_DIR)/main.elf
 
 LDFLAGS:= -T$(LDSCRIPT) -mthumb -mcpu=cortex-m3 -Wl,--gc-sections
 CFLAGS:= -mcpu=cortex-m3 -mthumb -g -std=c11 -MMD
-CFLAGS+= -I sam -I sam/sam3x/include -I sam/sam3x/source -I sam/cmsis -I .
+CFLAGS+= -I include -I sam -I sam/sam3x/include -I sam/sam3x/source -I sam/cmsis -I .
 CFLAGS+= -D $(MCUTYPE)
 
 .DEFAULT_GOAL := $(ELF)

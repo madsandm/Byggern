@@ -18,20 +18,21 @@ int main()
 {
     SystemInit();
     configure_uart();
-    can_init((CanInit){.brp = 7, .phase1 = 6, .phase2 = 1, .propag = 6}, 0); // 500 kbps at 84 MHz
+    //can_init((CanInit){.brp = 7, .phase1 = 6, .phase2 = 1, .propag = 6}, 0); // 500 kbps at 84 MHz
 
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
-    //Uncomment after including uart above
-    //uart_init(/*cpufreq*/, /*baud*/);
-    //printf("Hello World\n\r");
 
 
     CanMsg msg;
     while (1)
     {
         /* code */
-        printf("Hello World\n\r");
+        //printf("Hello World\n\r");
+        //can_rx(&msg);
+        printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.length);
+        printf("\n\r");
+        for (int i = 0;i < 1000000;i++);
     }
     
 }
