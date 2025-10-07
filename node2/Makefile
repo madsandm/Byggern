@@ -9,6 +9,8 @@ SOURCE_FILES = \
 	$(BOOTUP) \
 	main.c \
 	src/uart.c \
+	uart_and_printf/uart.c \
+	uart_and_printf/printf-stdarg.c \
 #   filename1.c \
 #   filename2.c \
 #	filenameN.c
@@ -64,6 +66,8 @@ flash: $(ELF)
 	if pgr openocd; then killall -s 9 openocd; fi
 	openocd -f sam/openocd.cfg -c "program ${BUILD_DIR}/main.elf verify reset exit"
 
+.PHONY: go
+go: clean flash
 
 # pull in dependencies
 -include	$(OBJS:.o=.d)

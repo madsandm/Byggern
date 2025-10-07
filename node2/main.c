@@ -11,7 +11,7 @@
  * If you get errors such as "arm-none-eabi-gcc: no such file", you may need to reinstall the arm gcc packages using
  * apt or your favorite package manager.
  */
-#include "include/uart.h"
+#include "uart_and_printf/uart.h"
 
 int main()
 {
@@ -26,6 +26,8 @@ int main()
     while (1)
     {
         /* code */
+        configure_uart();
+        printf("Hello World\n\r");
     }
     
 }
