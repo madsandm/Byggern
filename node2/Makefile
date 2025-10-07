@@ -8,7 +8,6 @@ MCUTYPE = __SAM3X8E__
 SOURCE_FILES = \
 	$(BOOTUP) \
 	main.c \
-	src/uart.c \
 	uart_and_printf/uart.c \
 	uart_and_printf/printf-stdarg.c \
 #   filename1.c \
