@@ -7,10 +7,11 @@ MCUTYPE = __SAM3X8E__
 # Do NOT use a backslash after the last file.
 SOURCE_FILES = \
 	$(BOOTUP) \
-	main.c \
+	src/main.c \
 	src/uart.c \
 	src/printf-stdarg.c \
-#   filename1.c \
+	src/can.c \
+	src/syscalls.c \
 #   filename2.c \
 #	filenameN.c
 
