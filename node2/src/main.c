@@ -16,12 +16,17 @@
 
 int main()
 {
-    uint32_t can_br = 0x123; // Example CAN bit rate setting
+    uint32_t can_br = 0x00252566; // CAN bit rate setting
     
     SystemInit();
     configure_uart();
-    can_init(0x123, 1, 1);
-    
+    uint8_t status = can_init(can_br, 1, 2);
+    if (status) {
+        printf("CAN initialization failed\n\r");
+    } else {
+        printf("CAN initialized successfully\n\r");
+    }
+
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
 
@@ -31,14 +36,20 @@ int main()
     {
         /* code */
         //printf("Hello World\n\r");
-        can_receive(&msg, 1);
+        //can_receive(&msg, 0);
         printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.data_length);
         for (int i = 0; i < msg.data_length; i++)
         {
-            printf(", %d", msg.data[i]);
+            printf("%c", msg.data[i]);
         }
         printf("\n\r");
-        for (int i = 0;i < 1000000;i++);
+        for (int i = 0;i < 100000;i++);
+        msg.id = 4;
+        msg.data_length = 2;
+        msg.data[0] = 'h';
+        msg.data[1] = 'e';
+        can_send(&msg, 0);
+        for (int i = 0;i < 100000;i++);
     }
     
 }
