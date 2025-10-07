@@ -19,7 +19,7 @@ int main() {
     sram.init();
     adc.init();
     spi.init();
-    // oled.init();
+    oled.init();
     canbus.init();
 
     // Enable interrupts
@@ -29,7 +29,7 @@ int main() {
 
     char data[] = "Hello!";
 
-    while (true) {
+/*     while (true) {
         canbus.transmit((CanbusPacket){
             .id = 13,
             .data = data,
@@ -45,20 +45,7 @@ int main() {
         free(response.data);
 
         _delay_ms(1000);
-    }
-
-    while(true);
-
-    _delay_ms(1000);
-
-    CanbusPacket response = canbus.receive();
-    printf("ID: %d, Size: %d, data: ", response.id, response.size);
-    for (char i = 0; i < response.size; i++) {
-        printf("%c", response.data[i]);
-    }
-    printf("\n");
-    free(response.data);
-    while (true);
+    } */
 
     //adc.printChannels();
 

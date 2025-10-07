@@ -61,7 +61,7 @@ static uint8_t read_buttons(uint8_t index) {
 
 
 static void write_leds(uint8_t index, uint8_t value) {
-    // Implement LED writing functionality here
+    // Implement LED writing functionality herePIOB = (1<<13)
     spi.slave_select(&PORTB, IO_BOARD_CS);
     spi.transmit(0x05);
     _delay_us(2);

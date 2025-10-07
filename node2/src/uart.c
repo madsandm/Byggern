@@ -1,7 +1,7 @@
 /*
  * uart.c
  *
- * Author: Gustav O. Often and Eivind H. Jølsgard
+ * Author: Gustav O. Often and Eivind H. Jï¿½lsgard
  *
  * For use in TTK4155 Embedded and Industrial Computer Systems Design
  * NTNU - Norwegian University of Science and Technology
@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "sam.h"
-#include "uart.h"
+#include "include/uart.h"
 
 //Ringbuffer for receiving multiple characters
 uart_ringbuffer rx_buffer;

@@ -15,13 +15,13 @@
 */
 
 /*
-Edited 2020 by Eivind H. Jølsgard and Gustav O. Often for use in course TTK4155
+Edited 2020 by Eivind H. Jï¿½lsgard and Gustav O. Often for use in course TTK4155
 2020
 */
 
 
 #include <stdarg.h>
-#include "uart.h"
+#include "include/uart.h"
 
 
 //insert function to print to here
