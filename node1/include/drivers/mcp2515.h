@@ -30,6 +30,9 @@
 #define TXRTSCTRL 0x0d
 #define CANCTRL 0x0f
 #define CANINTE 0b00101011
+#define CNF3 0x28
+#define CNF2 0x29
+#define CNF1 0x2a
 
 // CANINTE bit shifts
 #define RX0IE 0

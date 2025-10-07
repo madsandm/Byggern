@@ -29,7 +29,7 @@ int main() {
 
     char data[] = "Hello!";
 
-/*     while (true) {
+    while (true) {
         canbus.transmit((CanbusPacket){
             .id = 13,
             .data = data,
@@ -44,8 +44,8 @@ int main() {
         printf("\n");
         free(response.data);
 
-        _delay_ms(1000);
-    } */
+        _delay_ms(10);
+    }
 
     //adc.printChannels();
 

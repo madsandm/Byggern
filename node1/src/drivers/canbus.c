@@ -6,6 +6,11 @@
 static void canbus_init() {
     mcp2515.reset();
 
+    // Set CAN bus bit timings
+    mcp2515.write(CNF3, 0x05, 1);
+    mcp2515.write(CNF2, 0xa4, 1);
+    mcp2515.write(CNF1, 0x81, 1);
+
     // Enable interrupts
     mcp2515.bit_modify(CANINTE, 1 << RX0IE, 0xff);
 
@@ -13,8 +18,8 @@ static void canbus_init() {
     mcp2515.bit_modify(RXB0 | TXBnCTRL, 0b01100100, 0b01100000); // Accept all, without rollover
 
     // Enter desired mode
-    mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
-    //mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
+    //mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
+    mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
 }
 
 static void canbus_transmit(CanbusPacket packet) {
