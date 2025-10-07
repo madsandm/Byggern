@@ -10,7 +10,7 @@ SOURCE_FILES = \
 	src/main.c \
 	src/uart.c \
 	src/printf-stdarg.c \
-	src/can.c \
+	src/can_controller.c \
 	src/syscalls.c \
 #   filename2.c \
 #	filenameN.c
