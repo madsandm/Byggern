@@ -58,6 +58,7 @@ void test_latch(){
 
 void etch_a_sketch() {
     oled.clear();
+    int counter = 0;
     while (true) {
         if (io.read_buttons(2)) {
             oled.clear();
@@ -69,11 +70,14 @@ void etch_a_sketch() {
         if (col > 127) col = 127;
         oled.pos(row, col);
         oled.draw_square(col, row, 3);
-        _delay_us(10);
+        //_delay_us(10);
         if (io.read_buttons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }
-        oled.present();
+        if (counter++ > 20) {
+            counter = 0;
+            oled.present();
+        }
     }
 }
 
@@ -88,9 +92,11 @@ void pong() {
     uint8_t score1 = 0;
     uint8_t score2 = 0;
     oled.clear();
+    oled.present();
 
     while (true) {
         // Display scores
+        oled.erase_area(8, 0, 120, 63); // Clear ball area
         oled.pos(0, 50);
 
         oled.print(itoa(score1, NULL, 10));
@@ -98,29 +104,33 @@ void pong() {
         oled.print(itoa(score2, NULL, 10));
 
         // Read joystick positions to move paddles
-        paddle1_y = (256 - io.read_joystick(1)) * 8 / 32;
+        paddle1_y = (256 - io.read_joystick(1)*12/10) * 8 / 32;
         paddle2_y = (256 - io.read_touchpad(1)) * 8 / 32;
 
         //draw paddles and ball
+        oled.erase_area(0, 0, 7, 63); // Clear left paddle area
         oled.draw_square(0, paddle1_y, 8);
         oled.draw_square(0, paddle1_y + 8, 8);
+
+        oled.erase_area(120, 0, 127, 63); // Clear right paddle area
         oled.draw_square(120, paddle2_y, 8);
         oled.draw_square(120, paddle2_y + 8, 8);
-        oled.draw_square(ball_x, ball_y, 4);
+
+        oled.circle(ball_x, ball_y, 3);
 
         // Update ball position
         ball_x += ball_dx;
         ball_y += ball_dy;
 
-
         // Check for collisions with paddles
-        if (ball_x <= 8 && ball_y >= paddle1_y && ball_y <= paddle1_y + 16) {
+        if (ball_x <= (8 + 3) && ball_y >= paddle1_y && ball_y <= paddle1_y + 16) {
             ball_dx = -ball_dx;
-            ball_x = 8; // Prevent sticking to paddle
+            ball_dy = TCNT1 % 5 - 5; // Randomize vertical direction
+            ball_x = (8 + 3); // Prevent sticking to paddle
         }
-        if (ball_x >= 116 && ball_y >= paddle2_y && ball_y <= paddle2_y + 16) {
+        if (ball_x >= (120 - 3) && ball_y >= paddle2_y && ball_y <= paddle2_y + 16) {
             ball_dx = -ball_dx;
-            ball_x = 116; // Prevent sticking to paddle
+            ball_x = (119 - 3); // Prevent sticking to paddle
         }
 
         // Check for scoring
@@ -153,12 +163,13 @@ void pong() {
             } else {
                 oled.print("Player 2 Wins!");
             }
+            oled.present();
             _delay_ms(4000);
             break;
         }
 
-        _delay_ms(100);
-        oled.clear();
+        _delay_ms(10);
+        oled.present();
         if (io.read_buttons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }

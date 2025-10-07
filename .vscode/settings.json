@@ -4,6 +4,13 @@
         "menu.h": "c",
         "gpio.h": "c",
         "fonts.h": "c",
-        "oled.h": "c"
+        "oled.h": "c",
+        "io.h": "c",
+        "utilities.h": "c",
+        "joystick.h": "c",
+        "stdbool.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "delay.h": "c"
     }
 }

@@ -7,6 +7,7 @@
 #define FRAMEBUFFER_SIZE 1024
 
 #include <stdint.h>
+#include <stdlib.h>
 #include "drivers/sram.h"
 
 typedef struct {
@@ -19,7 +20,8 @@ typedef struct {
     void (*draw_pixel)(uint8_t x, uint8_t y);
     void (*draw_square)(uint8_t x, uint8_t y, uint8_t size);
     void (*line)(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
-    void (*circle)(uint8_t xm, uint8_t ym, uint8_t radius);
+    void (*circle)(int xm, int ym, int radius);
+    void (*erase_area)(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
 
     // SRAM buffer functions
     void (*sram_init)();

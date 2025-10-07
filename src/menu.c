@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "utilities.h"
 #include "drivers/oled.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +7,6 @@
 #include <string.h>
 #include "drivers/joystick.h"
 #include <util/delay.h>
-#include "utilities.h"
 
 IMenuItem mainMenu = {
     .name = "Main Menu",
@@ -52,8 +52,8 @@ static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
 
 static void menu_init() {
     IMenuItem* gameMenu = menu_addItem(&mainMenu, "Games");
-    IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
-    IMenuItem* music = menu_addItem(&mainMenu, "Music");
+   // IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
+    //IMenuItem* music = menu_addItem(&mainMenu, "Music");
 
     IMenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
     menu_addItem(gameMenu, "Snake");
@@ -62,7 +62,7 @@ static void menu_init() {
     etchASketch->entryPoint = etch_a_sketch;
     pong_game->entryPoint = pong;
 
-    menu_addItem(documentItem, "Epstein files");
+    //menu_addItem(documentItem, "Epstein files");
 }
 
 static void menu_render(IMenuItem* menuItem) {

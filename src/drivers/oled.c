@@ -5,6 +5,7 @@
 #include <avr/io.h>
 #include "fonts.h"
 #include "drivers/sram.h"
+#include <string.h>
 
 static void oled_init() {
     GPIO.initPin(&DDRB, DISPLAY_CS, OUTPUT);
@@ -113,7 +114,7 @@ static void oled_pos(uint8_t row, uint8_t col) {
     fb.cursor_y = row;
 }
     
-static void oled_print(char* str) {
+static void oled_print(const char* str) {
     while (*str) {
         if (*str < 32 || *str > 126) {
             str++;
@@ -174,6 +175,16 @@ static void oled_circle(int xm, int ym, int r) {
     } while (x < 0);
 }
 
+static void oled_erase_area(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
+    if (x1 >= 128 || y1 >= 64 || x2 >= 128 || y2 >= 64) return; // Out of bounds
+    if (x1 > x2 || y1 > y2) return; // Invalid coordinates
+    for (uint8_t x = x1; x <= x2; x++) {
+        for (uint8_t y = y1; y <= y2; y++) {
+            fb.back[y / 8][x] &= ~(1 << (y % 8));
+        }
+    }
+}
+
 
 IOLED oled = {
     .init = oled_init,
@@ -186,6 +197,7 @@ IOLED oled = {
     .draw_square = oled_draw_square,
     .line = oled_line,
     .circle = oled_circle,
+    .erase_area = oled_erase_area,
 
     // SRAM buffer functions
     .sram_init = oled_sram_init,

@@ -28,36 +28,18 @@ int main() {
 
     //ioGrid.calibrate(touchpad);
 
-    _delay_ms(1000);
+    //_delay_ms(1000);
 
     //menu.init();
     //menu.show(&mainMenu);
     
-
-    //oled.clear();
     //oled.circle(6, 30, 10);
     oled.sram_init();
     oled.sram_flush();
-
+    
     menu.init();
     menu.show(&mainMenu);
     //etch_a_sketch();
-
-/*     int j = 0;
-    while(true){
-        oled.draw_pixel(10, 10);
-        oled.draw_square(20, 20, 5);
-        oled.line(30, 30, 100, 30);
-        oled.circle(50 + j, 50, 10);
-
-        oled.sram_swap();
-        oled.sram_flush();
-        _delay_ms(1000);
-
-        j++;
-    } */
-    
-
     
     int i = 0;
     bool toggle = true;
