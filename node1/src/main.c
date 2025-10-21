@@ -12,6 +12,7 @@
 #include "drivers/oled.h"
 #include "drivers/canbus.h"
 #include "drivers/mcp2515.h"
+#include "drivers/io.h"
 #include "menu.h"
 
 int main() {
@@ -26,8 +27,9 @@ int main() {
     sei();
 
     printf("System initialized.\n");
-
-    char data[] = "Hello!";
+    
+    can_joystick();
+    char data[] = "Heilo";
 
     
     canbus.transmit((CanbusPacket){
@@ -46,23 +48,12 @@ int main() {
 
     _delay_ms(10);
     
-
-    //adc.printChannels();
-
-    //ioGrid.calibrate(touchpad);
-
-    //_delay_ms(1000);
-
-    //menu.init();
-    //menu.show(&mainMenu);
-    
-    //oled.circle(6, 30, 10);
     oled.sram_init();
     oled.sram_flush();
     
-    menu.init();
-    menu.show(&mainMenu);
-    //etch_a_sketch();
+    
+    //menu.init();
+    //menu.show(&mainMenu);
     
     int i = 0;
     bool toggle = true;
@@ -83,7 +74,6 @@ int main() {
         _delay_ms(50);
     }
 
-    //adc.printChannels();
 
     while (true);
     

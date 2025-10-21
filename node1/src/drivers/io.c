@@ -44,6 +44,17 @@ static uint8_t read_joystick(uint8_t index) {
     return arr[index];  // Return the first byte as the touchpad value
 }
 
+static void read_joystick_buffer(uint8_t* buffer) {
+    spi.slave_select(&PORTB, IO_BOARD_CS);
+    spi.transmit(0x03);
+    _delay_us(40);
+    for (int i = 0; i < 3; i++) {
+        buffer[i] = spi.receive();
+        _delay_us(2);
+    }
+    spi.slave_deselect(&PORTB, IO_BOARD_CS);
+}
+
 
 static uint8_t read_buttons(uint8_t index) {
     // Implement button reading functionality here
