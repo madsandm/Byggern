@@ -188,11 +188,7 @@ void can_joystick(){
             j_h,
             j_b
         };
-        canbus.transmit((CanbusPacket){
-        .id = 24,
-        .data = data,
-        .size = sizeof(data)
-        });
+        canbus.transmit(canbus.create_packet(24, data, sizeof(data)));
 
         if (io.read_buttons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed

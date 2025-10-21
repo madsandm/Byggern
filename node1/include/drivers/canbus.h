@@ -52,6 +52,7 @@ typedef struct {
     void (*transmit)(CanbusPacket packet);
     CanbusPacket (*receive)();
     CanbusPacket (*create_packet_from_string)(uint16_t id, char* str);
+    CanbusPacket (*create_packet)(uint16_t id, uint8_t* data, uint8_t size);
 } ICanbus;
 
 ICanbus canbus;

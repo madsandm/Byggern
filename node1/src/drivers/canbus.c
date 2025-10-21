@@ -71,17 +71,18 @@ static CanbusPacket canbus_receive() {
     id = (id << 3) | (frame[1] >> 5);
 
     uint8_t size = frame[4] & 0x0F;
-    uint8_t data[8];
+
+    CanbusPacket ret = {
+        .id = id,
+        .size = size,
+    };
+
     for (uint8_t i = 0; i < size; i++) {
-        data[i] = frame[5 + i];
+        ret.data[i] = frame[5 + i];
     }
     free(frame);
 
-    return (CanbusPacket){
-        .id = id,
-        .size = size,
-        .data = data
-    };
+    return ret;
 }
 
 static CanbusPacket canbus_create_packet_from_string(uint16_t id, char* str) {
@@ -107,9 +108,27 @@ static CanbusPacket canbus_create_packet_from_string(uint16_t id, char* str) {
     return ret;
 }
 
+static CanbusPacket canbus_create_packet(uint16_t id, uint8_t* data, uint8_t size) {
+    if (size > 8) {
+        printf("Canbus data to send is too large.");
+    }
+    
+    CanbusPacket ret = {
+        .id = id,
+        .size = size
+    };
+
+    for (uint8_t i = 0; i < size; i++) {
+        ret.data[i] = data[i];
+    }
+
+    return ret;
+}
+
 ICanbus canbus = {
     .init = canbus_init,
     .transmit = canbus_transmit,
     .receive = canbus_receive,
-    .create_packet_from_string = canbus_create_packet_from_string
+    .create_packet_from_string = canbus_create_packet_from_string,
+    .create_packet = canbus_create_packet
 };
