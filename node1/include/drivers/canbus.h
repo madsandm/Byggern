@@ -43,14 +43,15 @@
 
 typedef struct CanbusPacket {
     uint16_t id;
-    uint8_t* data;
     uint8_t size;
+    uint8_t data[8];
 } CanbusPacket;
 
 typedef struct {
     void (*init)();
     void (*transmit)(CanbusPacket packet);
     CanbusPacket (*receive)();
+    CanbusPacket (*create_packet_from_string)(uint16_t id, char* str);
 } ICanbus;
 
 ICanbus canbus;

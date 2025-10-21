@@ -27,14 +27,7 @@ int main() {
 
     printf("System initialized.\n");
 
-    char data[] = "Hello!";
-
-    
-    canbus.transmit((CanbusPacket){
-        .id = 13,
-        .data = data,
-        .size = sizeof(data)
-    });
+    canbus.transmit(canbus.create_packet_from_string(13, "hei"));
 
     /* CanbusPacket response = canbus.receive();
     printf("ID: %d, Size: %d, data: ", response.id, response.size);

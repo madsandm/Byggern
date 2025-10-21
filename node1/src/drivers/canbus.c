@@ -1,6 +1,7 @@
 #include "drivers/canbus.h"
 #include "drivers/mcp2515.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 
 static void canbus_init() {
@@ -70,22 +71,45 @@ static CanbusPacket canbus_receive() {
     id = (id << 3) | (frame[1] >> 5);
 
     uint8_t size = frame[4] & 0x0F;
-    uint8_t* data = malloc(size);
+    uint8_t data[8];
     for (uint8_t i = 0; i < size; i++) {
         data[i] = frame[5 + i];
     }
-
     free(frame);
 
     return (CanbusPacket){
         .id = id,
-        .data = data,
-        .size = size
+        .size = size,
+        .data = data
     };
+}
+
+static CanbusPacket canbus_create_packet_from_string(uint16_t id, char* str) {
+    CanbusPacket ret = {
+        .id = id,
+        .size = 8
+    };
+
+    bool endFound = false;
+    for (uint8_t i = 0; i < 8; i++) {
+        if (str[i] == 0) {
+            ret.size = i;
+            endFound = true;
+            break;
+        }
+        ret.data[i] = str[i];
+    }
+
+    if (!endFound && str[8] != 0) {
+        printf("String is too long for a canbus packet");
+    }
+
+    return ret;
 }
 
 ICanbus canbus = {
     .init = canbus_init,
     .transmit = canbus_transmit,
-    .receive = canbus_receive
+    .receive = canbus_receive,
+    .create_packet_from_string = canbus_create_packet_from_string
 };
