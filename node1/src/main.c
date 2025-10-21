@@ -28,6 +28,9 @@ int main() {
 
     printf("System initialized.\n");
 
+    //can_joystick();
+    char data[] = "Heilo";
+
 
     _delay_ms(10);
     

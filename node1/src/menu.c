@@ -8,6 +8,7 @@
 #include "drivers/joystick.h"
 #include "utilities.h"
 #include <util/delay.h>
+#include "drivers/sram.h"
 
 IMenuItem mainMenu = {
     .name = "Main Menu",
@@ -27,7 +28,7 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
     child->parent = parent;
     parent->numberOfChildren++;
 
-    IMenuItem** newChildren = realloc(parent->children, parent->numberOfChildren * sizeof(IMenuItem*));
+    IMenuItem** newChildren = sram.realloc(parent->children, parent->numberOfChildren * sizeof(IMenuItem*));
     if (newChildren) {
         parent->children = newChildren;
     } else {
@@ -38,7 +39,7 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
 }
 
 static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
-    IMenuItem* item = malloc(sizeof(IMenuItem));
+    IMenuItem* item = sram.malloc(sizeof(IMenuItem));
     if (item == NULL) {
         printf("COULD NOT ALLOCATE MEMORY\n");
     }

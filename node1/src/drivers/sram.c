@@ -40,9 +40,30 @@ static void SRAM_test() {
     printf("SRAM test completed with %d write errors and %d retrieval errors\n", write_errors, retrieval_errors);
 }
 
+uint16_t sram_heap_ptr = EXTERNAL_RAM_ADDRESS + 0x800; // Remove space used for oled
+static void* SRAM_malloc(uint16_t size) {
+    if (size + sram_heap_ptr > EXTERNAL_RAM_SIZE) {
+        return NULL;
+    }
+    uint16_t ret = sram_heap_ptr;
+    sram_heap_ptr += size;
+    return ret;
+}
+
+static void* SRAM_realloc(uint8_t* ptr, uint16_t size) {
+    uint8_t* newSpace = SRAM_malloc(size);
+    for (uint16_t i = 0; i < size; i++) {
+        newSpace[i] = ptr[i];
+    }
+    return newSpace;
+}
+
+
 ISRAM sram = {
     .data = (char*)EXTERNAL_RAM_ADDRESS,
     .size = EXTERNAL_RAM_SIZE,
     .init = SRAM_init,
-    .test = SRAM_test
+    .test = SRAM_test,
+    .malloc = SRAM_malloc,
+    .realloc = SRAM_realloc
 };
