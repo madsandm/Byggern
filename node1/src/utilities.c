@@ -8,6 +8,7 @@
 #include "drivers/io.h"
 #include "drivers/oled.h"
 #include "drivers/canbus.h"
+#include "drivers/joystick.h"
 #include <stdlib.h>
 
 void blinky(uint8_t times){
@@ -180,12 +181,13 @@ void pong() {
 
 void can_joystick(){
     while (true){
+        IPosition position = ioGrid.getPosition(joystick);
         uint8_t j_h = io.read_joystick(0);
         uint8_t j_v = io.read_joystick(1);
         uint8_t j_b = io.read_joystick(2);
         uint8_t data[3] = {
-            j_v,
-            j_h,
+            position.x + 128,
+            position.y + 128,
             j_b
         };
         canbus.transmit(canbus.create_packet(24, data, sizeof(data)));
@@ -194,6 +196,11 @@ void can_joystick(){
             break; // Exit the loop if button 0 is pressed
         }
         _delay_ms(60);
+        oled.clear();
+        oled.print(itoa(j_h,NULL, 10));
+        oled.present();
+
+
         printf("sent joystick\n");
     }
 }

@@ -27,16 +27,6 @@ int main() {
     sei();
 
     printf("System initialized.\n");
-    
-    can_joystick();
-    char data[] = "Heilo";
-
-    
-    canbus.transmit((CanbusPacket){
-        .id = 13,
-        .data = data,
-        .size = sizeof(data)
-    });
 
     /* CanbusPacket response = canbus.receive();
     printf("ID: %d, Size: %d, data: ", response.id, response.size);
@@ -52,8 +42,8 @@ int main() {
     oled.sram_flush();
     
     
-    //menu.init();
-    //menu.show(&mainMenu);
+    menu.init();
+    menu.show(&mainMenu);
     
     int i = 0;
     bool toggle = true;
