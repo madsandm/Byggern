@@ -54,7 +54,7 @@ static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
 
 static void menu_init() {
     IMenuItem* gameMenu = menu_addItem(&mainMenu, "Games");
-   // IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
+    //IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
     //IMenuItem* music = menu_addItem(&mainMenu, "Music");
 
     IMenuItem* squash = menu_addItem(gameMenu, "Squash");
@@ -65,7 +65,6 @@ static void menu_init() {
     squash->entryPoint = can_joystick;
     etchASketch->entryPoint = etch_a_sketch;
     pong_game->entryPoint = pong;
-
 
     //menu_addItem(documentItem, "Epstein files");
 }

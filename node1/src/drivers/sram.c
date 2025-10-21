@@ -42,7 +42,7 @@ static void SRAM_test() {
 
 uint16_t sram_heap_ptr = EXTERNAL_RAM_ADDRESS + 0x800; // Remove space used for oled
 static void* SRAM_malloc(uint16_t size) {
-    if (size + sram_heap_ptr > EXTERNAL_RAM_SIZE) {
+    if (size + sram_heap_ptr > EXTERNAL_RAM_ADDRESS + EXTERNAL_RAM_SIZE) {
         return NULL;
     }
     uint16_t ret = sram_heap_ptr;
