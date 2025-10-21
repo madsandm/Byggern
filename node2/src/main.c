@@ -18,7 +18,7 @@
 
 int main()
 {
-    uint32_t can_br = CAN_BR_VAL; // CAN bit rate setting
+    uint32_t can_br = 0 << 24 | 41 << 16 | 0 << 12 | 5 << 8 | 5 << 4 | 2; // CAN bit rate setting
     
     SystemInit();
     configure_uart();
@@ -33,26 +33,20 @@ int main()
 
 
 
-    CAN_MESSAGE msg;
     while (1)
     {
         /* code */
+        CAN_MESSAGE msg_rx;
         //printf("Hello World\n\r");
-        uint8_t status = can_receive(&msg, 0);
-        if (status == 0) {
-            printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.data_length);
-            for (int i = 0; i < msg.data_length; i++) {
-                printf("%c", msg.data[i]);
+        if (can_receive(&msg_rx, 0) == 0) {
+            printf("ID: %d, Size: %d, Data: ", msg_rx.id, msg_rx.data_length);
+            for (int i = 0; i < msg_rx.data_length; i++) {
+                printf("%d ", (unsigned char)msg_rx.data[i]);
             }
             printf("\n\r");
+        } else {
+            //printf("No CAN message received\n\r");
         }
-        // for (int i = 0;i < 100000;i++);
-        // msg.id = 4;
-        // msg.data_length = 2;
-        // msg.data[0] = 'h';
-        // msg.data[1] = 'e';
-        // can_send(&msg, 0);
-        for (int i = 0;i < 100000;i++);
     }
     
 }
