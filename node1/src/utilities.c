@@ -193,14 +193,10 @@ void can_joystick(){
         canbus.transmit(canbus.create_packet(24, data, sizeof(data)));
 
         if (io.read_buttons(0) & (1 << 5)) {
+            printf("breaking loop");
             break; // Exit the loop if button 0 is pressed
         }
         _delay_ms(60);
-        oled.clear();
-        oled.print(itoa(j_h,NULL, 10));
-        oled.present();
-
-
         printf("sent joystick\n");
     }
 }
