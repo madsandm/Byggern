@@ -41,6 +41,20 @@
 #define TX1IE 3
 #define TX2IE 4
 
+// CNF Registers
+#define CNF1_SJW 6
+#define CNF1_BRP 0
+
+#define CNF2_BTLMODE 7
+#define CNF2_SAM 6
+#define CNF2_PHSEG1 3
+#define CNF2_PRSEG 0
+
+#define CNF3_SOF 7
+#define CNF3_WAKFIL 6
+#define CNF3_PHSEG2 0
+
+
 // Receive registers
 #define RXB0 0b01100000
 #define RXB1 0b01110000

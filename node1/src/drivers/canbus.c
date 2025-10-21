@@ -6,10 +6,28 @@
 static void canbus_init() {
     mcp2515.reset();
 
+    // printf("Canbus setup:\n");
+    // printf("PropSeg = %d\n", CANBUS_PROPSEG);
+    // printf("PS1 = %d\n", CANBUS_PS1);
+    // printf("PS2 = %d\n", CANBUS_PS2);
+    // printf("BRP = %d\n", CANBUS_BRP);
+    // printf("SJW = %d\n", CANBUS_BRP);
+    // printf("NBT = %d\n", CANBUS_NBT);
+
+    const uint8_t PHSEG2 = CANBUS_PS2 - 1;
+    const uint8_t PRSEG = CANBUS_PROPSEG - 1;
+    const uint8_t PHSEG1 = CANBUS_PS1 - 1;
+    const uint8_t BRP = CANBUS_BRP - 1;
+    const uint8_t SJW = CANBUS_SJW - 1;
+
+    const uint8_t cnf1 = ((SJW << CNF1_SJW) | (BRP << CNF1_BRP));
+    const uint8_t cnf2 = ((1 << CNF2_BTLMODE) | (PHSEG1 << CNF2_PHSEG1) | (PRSEG << CNF2_PRSEG));
+    const uint8_t cnf3 = (PHSEG2 << CNF3_PHSEG2);
+
     // Set CAN bus bit timings
-    mcp2515.write(CNF3, 0x05, 1);
-    mcp2515.write(CNF2, 0xa4, 1);
-    mcp2515.write(CNF1, 0x81, 1);
+    mcp2515.bit_modify(CNF1, 0xff, cnf1);
+    mcp2515.bit_modify(CNF2, 0xff, cnf2);
+    mcp2515.bit_modify(CNF3, 0xff, cnf3);
 
     // Enable interrupts
     mcp2515.bit_modify(CANINTE, 1 << RX0IE, 0xff);

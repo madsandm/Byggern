@@ -36,19 +36,20 @@ int main()
     {
         /* code */
         //printf("Hello World\n\r");
-        //can_receive(&msg, 0);
-        printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.data_length);
-        for (int i = 0; i < msg.data_length; i++)
-        {
-            printf("%c", msg.data[i]);
+        uint8_t status = can_receive(&msg, 0);
+        if (status == 0) {
+            printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.data_length); for (int i = 0; i < msg.data_length; i++)
+            {
+                printf("%c", msg.data[i]);
+            }
+            printf("\n\r");
         }
-        printf("\n\r");
-        for (int i = 0;i < 100000;i++);
-        msg.id = 4;
-        msg.data_length = 2;
-        msg.data[0] = 'h';
-        msg.data[1] = 'e';
-        can_send(&msg, 0);
+        // for (int i = 0;i < 100000;i++);
+        // msg.id = 4;
+        // msg.data_length = 2;
+        // msg.data[0] = 'h';
+        // msg.data[1] = 'e';
+        // can_send(&msg, 0);
         for (int i = 0;i < 100000;i++);
     }
     
