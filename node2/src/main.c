@@ -14,9 +14,11 @@
 #include "uart.h"
 #include "can_controller.h"
 
+#define CAN_BR_VAL (0 << 24) | (0x29 << 16) | (1 << 12) | (5 << 8) | (5 << 4) | (5 << 0)
+
 int main()
 {
-    uint32_t can_br = 0x00252566; // CAN bit rate setting
+    uint32_t can_br = CAN_BR_VAL; // CAN bit rate setting
     
     SystemInit();
     configure_uart();
@@ -36,9 +38,9 @@ int main()
     {
         /* code */
         //printf("Hello World\n\r");
-        //can_receive(&msg, 0);
-        printf("CAN message received: ID=%d, Length=%d, Data=", msg.id, msg.data_length);
-        for (int i = 0; i < msg.data_length; i++)
+        can_receive(&msg, 0);
+        printf("CAN message received: ID=%d, Length=%d, Data=\n", msg.id, msg.data_length);
+        /*for (int i = 0; i < msg.data_length; i++)
         {
             printf("%c", msg.data[i]);
         }
@@ -49,7 +51,7 @@ int main()
         msg.data[0] = 'h';
         msg.data[1] = 'e';
         can_send(&msg, 0);
-        for (int i = 0;i < 100000;i++);
+        for (int i = 0;i < 100000;i++); */
     }
     
 }
