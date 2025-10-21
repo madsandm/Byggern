@@ -7,6 +7,7 @@
 #include "drivers/gpio.h"
 #include "drivers/io.h"
 #include "drivers/oled.h"
+#include "drivers/canbus.h"
 #include <stdlib.h>
 
 void blinky(uint8_t times){
@@ -176,6 +177,26 @@ void pong() {
     }
 }
 
+
+void can_joystick(){
+    while (true){
+
+        uint8_t data[] = {
+            io.read_joystick(1),
+            io.read_joystick(2)
+        };
+
+        canbus.transmit((CanbusPacket){
+        .id = 13,
+        .data = data,
+        .size = sizeof(data)
+        });
+
+        if (io.read_buttons(0) & (1 << 5)) {
+            break; // Exit the loop if button 0 is pressed
+        }
+    }
+}
 
 void send_data(FILE* stream, const char* data, size_t size) {
     fwrite(data, 1, size, stream);
