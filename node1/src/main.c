@@ -29,23 +29,23 @@ int main() {
 
     char data[] = "Hello!";
 
-    while (true) {
-        canbus.transmit((CanbusPacket){
-            .id = 13,
-            .data = data,
-            .size = sizeof(data)
-        });
+    
+    canbus.transmit((CanbusPacket){
+        .id = 13,
+        .data = data,
+        .size = sizeof(data)
+    });
 
-        CanbusPacket response = canbus.receive();
-        printf("ID: %d, Size: %d, data: ", response.id, response.size);
-        for (char i = 0; i < response.size; i++) {
-            printf("%c", response.data[i]);
-        }
-        printf("\n");
-        free(response.data);
-
-        _delay_ms(10);
+    /* CanbusPacket response = canbus.receive();
+    printf("ID: %d, Size: %d, data: ", response.id, response.size);
+    for (char i = 0; i < response.size; i++) {
+        printf("%c", response.data[i]);
     }
+    printf("\n");
+    free(response.data); */
+
+    _delay_ms(10);
+    
 
     //adc.printChannels();
 
