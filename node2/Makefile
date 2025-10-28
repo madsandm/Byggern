@@ -6,19 +6,19 @@ MCUTYPE = __SAM3X8E__
 # Use relative file paths and a backslash before newline.
 # Do NOT use a backslash after the last file.
 SOURCE_DIR = src
-SOURCE_FILES = \
-	$(BOOTUP) \
-	src/main.c \
-	src/uart.c \
-	src/printf-stdarg.c \
-	src/can_controller.c \
-	src/syscalls.c \
-	src/pwm.c \
-	src/utilities.c \
-	src/decoder.c
-#   filename2.c \
-#	filenameN.c
-# SRC_FILES := $(BOOTUP) $(shell find $(SOURCE_DIR) -type f -name '*.c')
+# SOURCE_FILES = \
+# 	$(BOOTUP) \
+# 	src/main.c \
+# 	src/uart.c \
+# 	src/printf-stdarg.c \
+# 	src/can_controller.c \
+# 	src/syscalls.c \
+# 	src/pwm.c \
+# 	src/utilities.c \
+# 	src/decoder.c
+# #   filename2.c \
+# #	filenameN.c
+SOURCE_FILES := $(BOOTUP) $(shell find $(SOURCE_DIR) -type f -name '*.c')
 
 # Feel free to ignore anything below this line
 VPATH:= $(dir $(SOURCE_FILES))
