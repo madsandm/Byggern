@@ -2,6 +2,7 @@
 #include "can_controller.h"
 #include "pwm.h"
 #include "controller.h"
+#include "motor_driver.h"
 #include "solenoid.h"
 
 uint32_t can_joystick_to_us(){
