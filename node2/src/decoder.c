@@ -35,10 +35,10 @@ void decoder_init() {
     // PIOC->PIO_WPMR = (0x50494F << 8) | PIO_WPMR_WPEN;
 }
 
-uint32_t decoder_read() {
-    uint32_t position = TC2->TC_CHANNEL[0].TC_CV;
+int decoder_read() {
+    int position = TC2->TC_CHANNEL[0].TC_CV;
     // uint32_t rotation = TC2->TC_CHANNEL[1].TC_CV;
     // printf("Position %d, Rotation %d\n", position, rotation);
 
-    return position;
+    return (position * 255 / 3000);
 }

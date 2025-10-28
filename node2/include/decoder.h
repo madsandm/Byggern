@@ -8,6 +8,6 @@
 #define DECODER_MAXFILT 10 // value from 1 to 63
 
 void decoder_init();
-uint32_t decoder_read();
+int decoder_read();
 
 #endif // ENCODER_H

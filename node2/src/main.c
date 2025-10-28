@@ -16,6 +16,7 @@
 #include "pwm.h"
 #include "utilities.h"
 #include "decoder.h"
+#include "controller.h"
 
 #define CAN_BR_VAL (0 << 24) | (0x29 << 16) | (1 << 12) | (5 << 8) | (5 << 4) | (5 << 0)
 
@@ -27,6 +28,8 @@ int main()
     configure_uart();
     servo_init();
     decoder_init();
+
+    motorController_init();
 
     uint8_t status = can_init(can_br, 1, 2);
     if (status) {
