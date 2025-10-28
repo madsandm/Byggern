@@ -36,6 +36,6 @@ void ADC_Handler(void) {
     if (isr & ADC_ISR_COMPE) {
         // Comparison event occurred (IR sensor blocked)
         // Set flag here
-        flag = 1;
+        IR_flag = 1;
     }
 }

@@ -4,7 +4,7 @@
 #include "sam.h"
 
 void motor_driver_init();
-void motor_driver_set_pos(uint32_t x);
+void motor_driver_set_vel(int x);
 
 
 #endif
