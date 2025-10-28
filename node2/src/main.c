@@ -14,6 +14,7 @@
 #include "uart.h"
 #include "can_controller.h"
 #include "pwm.h"
+#include "motor_driver.h"
 #include "utilities.h"
 #include "decoder.h"
 #include "controller.h"
@@ -26,10 +27,12 @@ int main()
     
     SystemInit();
     configure_uart();
+    pwm_init();
     servo_init();
     decoder_init();
 
     motorController_init();
+    motor_driver_init();
 
     uint8_t status = can_init(can_br, 1, 2);
     if (status) {

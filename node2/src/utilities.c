@@ -13,10 +13,10 @@ uint32_t can_joystick_to_us(){
             x = msg_rx.data[0];
             y = ((255 - msg_rx.data[1]) * 47 + 9000)/10;
             b = msg_rx.data[2];
-            // printf("%d %d %d\n", x,y,b);
-            pwm_set_duty_us(1,y);
-
             motorController_setTarget(x);
+            motor_driver_set_pos(x);
+            pwm_set_duty_us(1,y);
+            printf("%d %d %d\n", x,y,b);
         }
     }
     

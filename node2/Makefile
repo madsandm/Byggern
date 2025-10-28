@@ -5,6 +5,7 @@ MCUTYPE = __SAM3X8E__
 # In particular, remember to add the UART and CAN starter files.
 # Use relative file paths and a backslash before newline.
 # Do NOT use a backslash after the last file.
+<<<<<<< Updated upstream
 SOURCE_DIR = src
 # SOURCE_FILES = \
 # 	$(BOOTUP) \
@@ -19,6 +20,20 @@ SOURCE_DIR = src
 # #   filename2.c \
 # #	filenameN.c
 SOURCE_FILES := $(BOOTUP) $(shell find $(SOURCE_DIR) -type f -name '*.c')
+=======
+SOURCE_FILES = \
+	$(BOOTUP) \
+	src/main.c \
+	src/uart.c \
+	src/printf-stdarg.c \
+	src/can_controller.c \
+	src/syscalls.c \
+	src/pwm.c \
+	src/utilities.c \
+	src/motor_driver.c \
+#   filename2.c \
+#	filenameN.c
+>>>>>>> Stashed changes
 
 # Feel free to ignore anything below this line
 VPATH:= $(dir $(SOURCE_FILES))
