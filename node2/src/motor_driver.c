@@ -9,15 +9,19 @@ void motor_driver_init(){
 }
 
 void motor_driver_set_vel(int x){
-    int vel;
-    
-    if (x < 0){
-        vel = abs(x) * 156;
-        PIOC->PIO_SODR = PIO_PC23;
+    if (x > 127 || x < -127) {
+        x = 0;
     } else {
-        vel = abs(x) * 156;
-        PIOC->PIO_CODR = PIO_PC23;
+        int vel;
+        
+        if (x < 0){
+            vel = abs(x) * 156;
+            PIOC->PIO_SODR = PIO_PC23;
+        } else {
+            vel = abs(x) * 156;
+            PIOC->PIO_CODR = PIO_PC23;
+        }
+        //printf("%d   %d\n", pos, (PIOB->PIO_ODSR & PIO_PC24) > 0);
+        pwm_set_duty_us_unrestricted(0, vel);
     }
-    //printf("%d   %d\n", pos, (PIOB->PIO_ODSR & PIO_PC24) > 0);
-    pwm_set_duty_us_unrestricted(0, vel);
 }
