@@ -9,5 +9,6 @@
 
 void decoder_init();
 int decoder_read();
+void decoder_setnullpoint();
 
 #endif // ENCODER_H

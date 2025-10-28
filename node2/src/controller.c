@@ -1,11 +1,33 @@
 #include "controller.h"
 #include "decoder.h"
+#include "motor_driver.h"
 
 int motorTarget = 0;
 int prevError = 0;
 int errorIntegrated = 0;
 
+void motorController_calibrate() {
+    motor_driver_set_vel(-50);
+    printf("Calibrating motor...\n");
+
+    for(int i = 0; i < 2000; i++) {}
+
+    int lastReading = 10000;
+    int currentReading;
+
+    do {
+        lastReading = (currentReading * 10 + lastReading * 90) / 100;
+        currentReading = decoder_read();
+        for (int i = 0; i < 100000; i++) {}
+    } while (lastReading > currentReading + 10);
+
+    motor_driver_set_vel(0);
+    decoder_setnullpoint();
+    printf("Motor calibration finished\n");
+}
+
 void motorController_init() {
+    motorController_calibrate();
     // Disable writeprotection
     PMC->PMC_WPMR = (0x504D43 << 8);
     TC0->TC_WPMR = (0x54494D << 8);
@@ -13,6 +35,7 @@ void motorController_init() {
     // Enable peripheral clock
     PMC->PMC_PCER0 |= (1 << ID_TC0); 
 
+    // Configure timer
     TC0->TC_CHANNEL[0].TC_CMR = 
         TC_CMR_TCCLKS_TIMER_CLOCK2    // MCK/8
         | TC_CMR_WAVE
@@ -29,17 +52,19 @@ void motorController_init() {
 
 
 void motorControl_loop() {
-    int meassurement = decoder_read();
+    int meassurement = decoder_read() / 3;
     int error = motorTarget - meassurement;
 
-    int controlVariable = CONTROLLER_P * error
+    int controlVariable = (CONTROLLER_P * error
         + CONTROLLER_I * errorIntegrated * CONTROLLER_INTERVAL_MS
-        + CONTROLLER_D * (error - prevError) / CONTROLLER_INTERVAL_MS;
+        + CONTROLLER_D * (error - prevError) / CONTROLLER_INTERVAL_MS) / 1000;
 
     errorIntegrated += error;
     prevError = error;
 
-    //printf("y=%d r=%d u=%d\n", meassurement, motorTarget, controlVariable);
+    printf("y=%d r=%d u=%d\n", meassurement, motorTarget, controlVariable);
+
+    motor_driver_set_vel(controlVariable);
 }
 
 void TC0_Handler(void)

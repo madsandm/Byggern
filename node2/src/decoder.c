@@ -40,5 +40,10 @@ int decoder_read() {
     // uint32_t rotation = TC2->TC_CHANNEL[1].TC_CV;
     // printf("Position %d, Rotation %d\n", position, rotation);
 
-    return (position * 255 / 3000);
+    return position;
+}
+
+void decoder_setnullpoint() {
+    TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
+    TC2->TC_CHANNEL[1].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
