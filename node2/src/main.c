@@ -34,9 +34,6 @@ int main()
     motorController_init();
     decoder_init();
 
-    motorController_init();
-    decoder_init();
-
     uint8_t status = can_init(can_br, 1, 2);
     if (status) {
         printf("CAN initialization failed\n\r");
