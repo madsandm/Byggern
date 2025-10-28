@@ -17,7 +17,7 @@ uint32_t can_joystick_to_us(){
             motorController_setTarget(x * 4 + 450);
             pwm_set_duty_us(1,y);
             set_solenoid(b);
-            printf("%d %d %d\n", x,y,b);
+            // printf("%d %d %d ", x,y,b);
         }
     }
     

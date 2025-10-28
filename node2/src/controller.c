@@ -7,7 +7,7 @@ int prevError = 0;
 int errorIntegrated = 0;
 
 void motorController_calibrate() {
-    motor_driver_set_vel(-50);
+    motor_driver_set_vel(-500);
     printf("Calibrating motor...\n");
 
     for(int i = 0; i < 2000; i++) {}
@@ -57,7 +57,7 @@ void motorControl_loop() {
 
     int controlVariable = (CONTROLLER_P * error
         + CONTROLLER_I * errorIntegrated * CONTROLLER_INTERVAL_MS
-        + CONTROLLER_D * (error - prevError) / CONTROLLER_INTERVAL_MS) / 1000;
+        + CONTROLLER_D * (error - prevError) / CONTROLLER_INTERVAL_MS) / 100;
 
     errorIntegrated += error;
     prevError = error;
