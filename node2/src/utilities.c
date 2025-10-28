@@ -2,6 +2,7 @@
 #include "can_controller.h"
 #include "pwm.h"
 #include "controller.h"
+#include "solenoid.h"
 
 uint32_t can_joystick_to_us(){
     volatile int x;
@@ -16,6 +17,7 @@ uint32_t can_joystick_to_us(){
             motorController_setTarget(x);
             motor_driver_set_vel(x);
             pwm_set_duty_us(1,y);
+            set_solenoid(b);
             printf("%d %d %d\n", x,y,b);
         }
     }

@@ -19,6 +19,7 @@
 #include "decoder.h"
 #include "controller.h"
 #include "adc.h"
+#include "solenoid.h"
 
 int main()
 {
@@ -33,6 +34,7 @@ int main()
     motor_driver_init();
     motorController_init();
     decoder_init();
+    solenoid_init();
 
     uint8_t status = can_init(can_br, 1, 2);
     if (status) {
@@ -44,7 +46,7 @@ int main()
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
     can_joystick_to_us();
-    
+
     while (1)
     {
         /* code */
