@@ -7,9 +7,13 @@
 
 void pwm_pin_setup(){
     PMC->PMC_PCER0 |= (1 << ID_PIOB);       // Enable clock for PIOB
-    PIOB->PIO_PDR = PIO_PDR_P13;            // Disable PIO
-    PIOB->PIO_ABSR = (1 << 13);             // SET PWM to PB13
-    PIOB->PIO_PUDR = PIO_PUDR_P13;          // Disable pull-up resistor
+    PIOB->PIO_PDR |= PIO_PDR_P13;            // Disable PIO
+    PIOB->PIO_ABSR |= (1 << 13);             // SET PWM to PB13
+    PIOB->PIO_PUDR |= PIO_PUDR_P13;          // Disable pull-up resistor
+
+    PIOB->PIO_PDR |= PIO_PDR_P12;            // Disable PIO
+    PIOB->PIO_ABSR |= (1 << 12);             // SET PWM to PB13
+    PIOB->PIO_PUDR |= PIO_PUDR_P12;          // Disable pull-up resistor
 }
 
 
@@ -48,7 +52,6 @@ void pwm_set_duty_us_unrestricted(uint8_t channel, uint32_t us){
 }
 
 void servo_init(){
-    pwm_pin_setup();
     pwm_channel_init(1);
     pwm_set_duty_us(1, 1500);
 }

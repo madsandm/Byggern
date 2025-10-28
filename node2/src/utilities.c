@@ -11,7 +11,7 @@ uint32_t can_joystick_to_us(){
         CAN_MESSAGE msg_rx;
         if (can_receive(&msg_rx, 0) == 0){
             x = msg_rx.data[0];
-            y = ((255 - msg_rx.data[1]) * 47 + 9000)/10;
+            y = ((msg_rx.data[1]) * 47 + 9000)/10;
             b = msg_rx.data[2];
             motorController_setTarget(x);
             motor_driver_set_pos(x);

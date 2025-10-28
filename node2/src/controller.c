@@ -39,7 +39,7 @@ void motorControl_loop() {
     errorIntegrated += error;
     prevError = error;
 
-    printf("y=%d r=%d u=%d\n", meassurement, motorTarget, controlVariable);
+    //printf("y=%d r=%d u=%d\n", meassurement, motorTarget, controlVariable);
 }
 
 void TC0_Handler(void)
