@@ -31,6 +31,7 @@ SOURCE_FILES = \
 	src/pwm.c \
 	src/utilities.c \
 	src/motor_driver.c \
+	src/adc.c \
 #   filename2.c \
 #	filenameN.c
 >>>>>>> Stashed changes

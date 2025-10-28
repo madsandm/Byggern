@@ -18,8 +18,7 @@
 #include "utilities.h"
 #include "decoder.h"
 #include "controller.h"
-
-#define CAN_BR_VAL (0 << 24) | (0x29 << 16) | (1 << 12) | (5 << 8) | (5 << 4) | (5 << 0)
+#include "adc.h"
 
 int main()
 {
@@ -30,6 +29,7 @@ int main()
     pwm_init();
     servo_init();
     decoder_init();
+    adc_init();
 
     motorController_init();
     motor_driver_init();
@@ -49,6 +49,8 @@ int main()
     {
         /* code */
         CAN_MESSAGE msg_rx;
+        printf("Starting main loop\n\r");
+
         //printf("Hello World\n\r");
         if (can_receive(&msg_rx, 0) == 0) {
             printf("ID: %d, Size: %d, Data: ", msg_rx.id, msg_rx.data_length);
@@ -60,21 +62,5 @@ int main()
             //printf("No CAN message received\n\r");
         }
     }
-
-    // while (1)
-    // {
-    //     /* code */
-    //     CAN_MESSAGE msg_rx;
-    //     //printf("Hello World\n\r");
-    //     if (can_receive(&msg_rx, 0) == 0) {
-    //         printf("ID: %d, Size: %d, Data: ", msg_rx.id, msg_rx.data_length);
-    //         for (int i = 0; i < msg_rx.data_length; i++) {
-    //             printf("%d ", (unsigned char)msg_rx.data[i]);
-    //         }
-    //         printf("\n\r");
-    //     } else {
-    //         //printf("No CAN message received\n\r");
-    //     }
-    // }
-    
+    return 0;
 }
