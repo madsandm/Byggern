@@ -12,6 +12,8 @@ SOURCE_FILES = \
 	src/printf-stdarg.c \
 	src/can_controller.c \
 	src/syscalls.c \
+	src/pwm.c \
+	src/utilities.c \
 #   filename2.c \
 #	filenameN.c
 

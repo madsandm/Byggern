@@ -13,8 +13,8 @@
  */
 #include "uart.h"
 #include "can_controller.h"
-
-#define CAN_BR_VAL (0 << 24) | (0x29 << 16) | (1 << 12) | (5 << 8) | (5 << 4) | (5 << 0)
+#include "pwm.h"
+#include "utilities.h"
 
 int main()
 {
@@ -22,6 +22,8 @@ int main()
     
     SystemInit();
     configure_uart();
+    servo_init();
+
     uint8_t status = can_init(can_br, 1, 2);
     if (status) {
         printf("CAN initialization failed\n\r");
@@ -31,8 +33,9 @@ int main()
 
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
+    can_joystick_to_us();
 
-
+    
     while (1)
     {
         /* code */
