@@ -179,8 +179,29 @@ void pong() {
     }
 }
 
+void squash_oled_score(uint16_t time, uint8_t life) {
+    oled_clear();
+    oled_pos(0, 32);
+    oled_print("Squash Game");
 
-void can_joystick(){
+    oled_pos(8*2, 0);
+    char buffer[10];
+    snprintf(buffer, sizeof(buffer), "%d", time);
+    oled_print("Time: ");
+    oled_print(buffer);
+
+    oled_pos(8*3, 0);
+    oled_print("Life: ");
+    snprintf(buffer, sizeof(buffer), "%d", life);
+    oled_print(buffer);
+
+    oled_present();
+}
+
+void squash_game(){
+
+    squash_oled_score(0, 0);
+
     CanbusPacket rx_packet;
     while (true){
         IPosition position = IODevice_getPosition(joystick);
@@ -209,6 +230,12 @@ void can_joystick(){
                 printf("%d ", rx_packet.data[i]);
             }
             printf("\n");
+
+            if (rx_packet.id == 1) {
+                uint16_t time = rx_packet.data[0] + ((uint16_t)rx_packet.data[1] << 8);
+                uint8_t life = rx_packet.data[2];
+                squash_oled_score(time, life);
+            }
         }
     }
 }

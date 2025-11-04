@@ -18,6 +18,6 @@ void etch_a_sketch();
 
 void pong();
 
-void can_joystick();
+void squash_game();
 
 #endif // UTILITIES_H

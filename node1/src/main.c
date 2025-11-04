@@ -28,9 +28,7 @@ int main() {
 
     printf("System initialized.\n");
 
-    //can_joystick();
-    char data[] = "Heilo";
-
+    //squash_game();
 
     _delay_ms(10);
 
@@ -39,26 +37,6 @@ int main() {
 
     menu_init();
     menu_show(&mainMenu);
-    
-    int i = 0;
-    bool toggle = true;
-    while (true) {
-
-        spi_slave_select(&PORTB, IO_BOARD_CS);
-        spi_transmit(0x05);
-        spi_transmit(i);
-        spi_transmit(toggle);
-        spi_slave_deselect(&PORTB, IO_BOARD_CS);
-
-        i++;
-        if(i >= 6){
-            i = 0;
-            toggle = !toggle;
-        }
-
-        _delay_ms(50);
-    }
-
 
     while (true);
     

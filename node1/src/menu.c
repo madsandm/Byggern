@@ -70,7 +70,7 @@ void menu_init() {
     menu_addItem(gameMenu, "Snake");
     IMenuItem* pong_game = menu_addItem(gameMenu, "Pong");
 
-    squash->entryPoint = can_joystick;
+    squash->entryPoint = squash_game;
     etchASketch->entryPoint = etch_a_sketch;
     pong_game->entryPoint = pong;
 
