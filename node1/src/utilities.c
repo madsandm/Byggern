@@ -10,6 +10,7 @@
 #include "drivers/canbus.h"
 #include "drivers/joystick.h"
 #include <stdlib.h>
+#include "drivers/mcp2515.h"
 
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
@@ -180,6 +181,7 @@ void pong() {
 
 
 void can_joystick(){
+    CanbusPacket rx_packet;
     while (true){
         IPosition position = ioGrid.getPosition(joystick);
         uint8_t j_h = io.read_joystick(0);
@@ -196,8 +198,18 @@ void can_joystick(){
             printf("breaking loop");
             break; // Exit the loop if button 0 is pressed
         }
-        _delay_ms(60);
+        _delay_ms(20);
         printf("sent joystick\n");
+        if (packet_available) {
+            rx_packet = canbus.receive();
+            packet_available = false;
+            mcp2515.bit_modify(CANINTF, 1 << RX0IF, 0); // Clear interrupt flag
+            printf("Received CAN packet - ID: %d, Size: %d, Data: ", rx_packet.id, rx_packet.size);
+            for (uint8_t i = 0; i < rx_packet.size; i++) {
+                printf("%d ", rx_packet.data[i]);
+            }
+            printf("\n");
+        }
     }
 }
 

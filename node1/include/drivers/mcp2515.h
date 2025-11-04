@@ -29,7 +29,8 @@
 // Registers
 #define TXRTSCTRL 0x0d
 #define CANCTRL 0x0f
-#define CANINTE 0b00101011
+#define CANINTE 0x2b
+#define CANINTF 0x2c
 #define CNF3 0x28
 #define CNF2 0x29
 #define CNF1 0x2a
@@ -40,6 +41,13 @@
 #define TX0IE 2
 #define TX1IE 3
 #define TX2IE 4
+
+// CANINTF bit shifts
+#define RX0IF 0
+#define RX1IF 1
+#define TX0IF 2
+#define TX1IF 3
+#define TX2IF 4
 
 // CNF Registers
 #define CNF1_SJW 6

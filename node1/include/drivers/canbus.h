@@ -2,6 +2,7 @@
 #define CANBUS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * CANBUS BIT TIMINGS
@@ -46,6 +47,8 @@ typedef struct CanbusPacket {
     uint8_t size;
     uint8_t data[8];
 } CanbusPacket;
+
+extern bool packet_available;
 
 typedef struct {
     void (*init)();
