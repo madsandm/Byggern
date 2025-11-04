@@ -5,6 +5,7 @@
 void motor_driver_init(){
     PIOC->PIO_PER = PIO_PC23;
     PIOC->PIO_OER = PIO_PC23;
+    PIOC->PIO_SODR = PIO_PC23; // Set direction pin low (forward)
     pwm_channel_init(0);
 }
 
@@ -18,9 +19,9 @@ void motor_driver_set_vel(int x){
     }
 
     if (x < 0){
-        PIOC->PIO_SODR = PIO_PC23;
+        PIOC->PIO_SODR |= PIO_PC23;
     } else {
-        PIOC->PIO_CODR = PIO_PC23;
+        PIOC->PIO_CODR |= PIO_PC23;
     }
 
     int vel = abs(x) * 20;
