@@ -3,17 +3,12 @@
 #include "drivers/gpio.h"
 #include <stdlib.h>
 
-uint8_t* mcp2515_read(uint8_t address, uint8_t size) {
+void mcp2515_read_into(uint8_t* dst, uint8_t address, uint8_t size) {
     spi_slave_select(MCP2515_SELECT_PINS);
-
     spi_transmit(MCP2515_COMMAND_READ);
     spi_transmit(address);
-
-    uint8_t* response = spi_receive_multi(size);
-
+    spi_receive_multi_into(dst, size);
     spi_slave_deselect(MCP2515_SELECT_PINS);
-
-    return response;
 }
 
 void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size) {
@@ -62,17 +57,4 @@ void mcp2515_bitModify(const uint8_t address, uint8_t mask, const uint8_t data) 
     spi_transmit(mask);
     spi_transmit(data);
     spi_slave_deselect(MCP2515_SELECT_PINS);
-}
-
-void mcp2515_dumpMemory() {
-    
-    printf("MCP2515 memory dump\n");
-    for (char i = 0; i < 8; i++) {
-        uint8_t* data = mcp2515_read(i * 8, 8);
-        for (char j = 0; j < 8; j++) {
-            printf("%x ", data[j]);
-        }
-        free(data);
-        printf("\n");
-    }
 }

@@ -12,42 +12,30 @@ void spi_init() {
     SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0); // Enable SPI, Master, set clock rate fck/16
 }
 
-void spi_transmit(char data) {
+void spi_transmit(uint8_t data) {
     SPDR = data;
     while (!(SPSR & (1 << SPIF)));
 }
 
-void spi_transmit_multi(const char* data, unsigned char size) {
-    for(char i = 0; i < size; i++) {
+void spi_transmit_multi(const uint8_t* data, uint8_t size) {
+    for(uint8_t i = 0; i < size; i++) {
         spi_transmit(data[i]);
     }
 }
 
-int spi_putchar(const char data, FILE* stream) {
-    spi_transmit(data);
-    return 0;
-}
-
-char spi_receive() {
+uint8_t spi_receive() {
     SPDR = 0xFF; // Send dummy byte to generate clock
     while (!(SPSR & (1 << SPIF)));
     return SPDR;
 }
 
-char* spi_receive_multi(unsigned char size) {
-    char* result = malloc(size);
-    if (result == NULL) {
-        // TODO: Handle
+void spi_receive_multi_into(uint8_t* dst, uint8_t size) {
+    for (uint8_t i = 0; i < size; i++) {
+        dst[i] = spi_receive();
     }
-
-    for (char i = 0; i < size; i++) {
-        result[i] = spi_receive();
-    }
-
-    return result;
 }
 
-void spi_transmit_receive(char* data) {
+void spi_transmit_receive(uint8_t* data) {
     SPDR = *data;
     while (!(SPSR & (1 << SPIF)));
     *data = SPDR;
@@ -61,4 +49,5 @@ void spi_slave_deselect(volatile uint8_t* port, uint8_t pin) {
     gpio_setPin(port, pin);
 }
 
+static int spi_putchar(const char c, FILE* stream) { spi_transmit((uint8_t)c); return 0; }
 FILE spi_stream = FDEV_SETUP_STREAM(spi_putchar, NULL, _FDEV_SETUP_WRITE);

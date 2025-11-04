@@ -31,6 +31,7 @@
 #define CANCTRL 0x0f
 #define CANINTE 0x2b
 #define CANINTF 0x2c
+#define BFPCTRL 0x0c
 #define CNF3 0x28
 #define CNF2 0x29
 #define CNF1 0x2a
@@ -48,6 +49,14 @@
 #define TX0IF 2
 #define TX1IF 3
 #define TX2IF 4
+
+// BFPCTRL bit shifts
+#define B0BFM 0
+#define B1BFM 1
+#define B0BFE 2
+#define B1BFE 3
+#define B0BFS 4
+#define B1BFS 5
 
 // CNF Registers
 #define CNF1_SJW 6
@@ -79,7 +88,7 @@
 #define TXBnD0   0b0110 // Transmit buffer data byte 0
 
 void mcp2515_reset();
-uint8_t* mcp2515_read(uint8_t address, uint8_t size);
+void mcp2515_read_into(uint8_t* dst, uint8_t address, uint8_t size);
 void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size);
 void mcp2515_requestToSend(const uint8_t tx_buffers);
 uint8_t mcp2515_readStatus();
