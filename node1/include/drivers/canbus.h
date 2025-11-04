@@ -35,11 +35,11 @@
 #define CANBUS_FREQ 125000UL
 #define CANBUS_PROPSEG 5
 #define CANBUS_PS1 5
-#define CANBUS_PS2 5
+#define CANBUS_PS2 2
 #define CANBUS_T_Q_100NS 5
 #define CANBUS_SJW 1
 #define CANBUS_NBT 1 + CANBUS_PROPSEG + CANBUS_PS1 + CANBUS_PS2
-#define CANBUS_BRP ((uint8_t)(CANBUS_F_OSC * CANBUS_T_Q_100NS / 2 / 10000000UL))
+#define CANBUS_BRP 2 //((uint8_t)(CANBUS_F_OSC * CANBUS_T_Q_100NS / 2 / 10000000UL))
 
 typedef struct CanbusPacket {
     uint16_t id;

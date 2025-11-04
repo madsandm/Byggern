@@ -23,7 +23,7 @@
 
 int main()
 {
-    uint32_t can_br = 0 << 24 | 41 << 16 | 0 << 12 | 5 << 8 | 5 << 4 | 2; // CAN bit rate setting
+    uint32_t can_br = 0 << 24 | 20 << 16 | 0 << 12 | 5 << 8 | 5 << 4 | 2; // CAN bit rate setting
     
     SystemInit();
     configure_uart();
