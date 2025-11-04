@@ -1,3 +1,4 @@
+#include "utilities.h"
 #include "sam.h"
 #include "can_controller.h"
 #include "pwm.h"
@@ -5,6 +6,13 @@
 #include "motor_driver.h"
 #include "solenoid.h"
 #include "can_interrupt.h"
+#include "time.h"
+#include "adc.h"
+
+uint32_t game_start_time;
+uint32_t lives;
+uint32_t game_freeze;
+uint32_t game_freeze_time;
 
 uint32_t can_joystick_to_us(){
     volatile int x;
@@ -40,5 +48,4 @@ uint32_t can_joystick_to_us(){
         set_solenoid(b);
         // printf("%d %d %d ", x,y,b);
     }
-
 }
