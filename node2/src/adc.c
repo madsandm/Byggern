@@ -19,7 +19,7 @@ void adc_init() {
                 | ADC_MR_STARTUP_SUT64 
                 | ADC_MR_TRACKTIM(15);
 
-    ADC->ADC_CWR = ADC_CWR_LOWTHRES(2048); // Set low threshold (2^12 / 3.3 * 2 = 0x9B2)
+    ADC->ADC_CWR = ADC_CWR_LOWTHRES(1000); // Set low threshold (2^12 / 3.3 * 2 = 0x9B2)
     ADC->ADC_EMR = ADC_EMR_CMPMODE_LOW
                  | ADC_EMR_CMPSEL(0)
                  | ADC_EMR_CMPFILTER(0);
@@ -37,5 +37,6 @@ void ADC_Handler(void) {
         // Comparison event occurred (IR sensor blocked)
         // Set flag here
         IR_flag = 1;
+        printf("flag triggered");
     }
 }
