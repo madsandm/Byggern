@@ -35,7 +35,7 @@ int main()
     motor_driver_init();
     decoder_init();
     solenoid_init();
-    //motorController_init();
+    motorController_init();
 
     uint8_t status = can_init(can_br, 1, 2);
     if (status) {

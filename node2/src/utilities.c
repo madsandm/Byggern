@@ -72,7 +72,7 @@ void score(uint32_t b){
     msg_tx.data[1] = (uint8_t)(game_time >> 8);
     msg_tx.data[2] = lives;
     can_send(&msg_tx,0);
-    
+    time_spinFor(msecs(10));
     printf("%d %d\n", game_time, lives);
 }
 

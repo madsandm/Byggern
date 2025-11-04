@@ -89,7 +89,7 @@ uint8_t can_init(uint32_t can_br, uint8_t num_tx_mb, uint8_t num_rx_mb)
 	{
 		CAN0->CAN_MB[n].CAN_MAM = 0; //Accept all messages
 		CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE;
-		CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX);
+		CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX_OVERWRITE);
 		CAN0->CAN_MB[n].CAN_MCR |= CAN_MCR_MTCR;
 
 		can_ier |= 1 << n; //Enable interrupt on rx mailbox
