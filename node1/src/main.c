@@ -17,10 +17,10 @@
 
 int main() {
     uart_init(MY_UBRR, true);
-    sram.init();
+    sram_init();
     adc_init();
-    spi.init();
-    oled.init();
+    spi_init();
+    oled_init();
     canbus_init();
 
     // Enable interrupts
@@ -33,11 +33,10 @@ int main() {
 
 
     _delay_ms(10);
-    
-    oled.sram_init();
-    oled.sram_flush();
-    
-    
+
+    oled_sram_init();
+    oled_sram_flush();
+
     menu_init();
     menu_show(&mainMenu);
     
@@ -45,11 +44,11 @@ int main() {
     bool toggle = true;
     while (true) {
 
-        spi.slave_select(&PORTB, IO_BOARD_CS);
-        spi.transmit(0x05);
-        spi.transmit(i);
-        spi.transmit(toggle);
-        spi.slave_deselect(&PORTB, IO_BOARD_CS);
+        spi_slave_select(&PORTB, IO_BOARD_CS);
+        spi_transmit(0x05);
+        spi_transmit(i);
+        spi_transmit(toggle);
+        spi_slave_deselect(&PORTB, IO_BOARD_CS);
 
         i++;
         if(i >= 6){

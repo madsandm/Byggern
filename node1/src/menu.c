@@ -28,7 +28,7 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
     child->parent = parent;
     parent->numberOfChildren++;
 
-    IMenuItem** newChildren = sram.realloc(parent->children, parent->numberOfChildren * sizeof(IMenuItem*));
+    IMenuItem** newChildren = sram_realloc(parent->children, parent->numberOfChildren * sizeof(IMenuItem*));
     if (newChildren) {
         parent->children = newChildren;
     } else {
@@ -39,7 +39,7 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
 }
 
 static char* sram_strdup(char* str) {
-    char* p = sram.malloc(strlen(str) + 1);
+    char* p = sram_malloc(strlen(str) + 1);
     if (p) {
         strcpy(p, str);
     }
@@ -47,7 +47,7 @@ static char* sram_strdup(char* str) {
 }
 
 static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
-    IMenuItem* item = sram.malloc(sizeof(IMenuItem));
+    IMenuItem* item = sram_malloc(sizeof(IMenuItem));
     if (item == NULL) {
         printf("COULD NOT ALLOCATE MEMORY\n");
     }
@@ -81,21 +81,21 @@ void menu_init() {
 }
 
 static void menu_render(IMenuItem* menuItem) {
-    oled.clear();
-    oled.pos(0, 32);
-    oled.print(menuItem->name);
+    oled_clear();
+    oled_pos(0, 32);
+    oled_print(menuItem->name);
     for (uint8_t i = 0; i < menuItem->numberOfChildren; i++) {
-        oled.pos((i + 1) * 8, 0);
+        oled_pos((i + 1) * 8, 0);
 
         if (menu_currentSelection == i) {
-            oled.print(">");
+            oled_print(">");
         } else {
-            oled.print(" ");
+            oled_print(" ");
         }
 
-        oled.print(menuItem->children[i]->name);
+        oled_print(menuItem->children[i]->name);
     }
-    oled.present();
+    oled_present();
 }
 
 void menu_show(IMenuItem* menuItem) {

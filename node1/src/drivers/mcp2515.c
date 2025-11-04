@@ -4,14 +4,14 @@
 #include <stdlib.h>
 
 uint8_t* mcp2515_read(uint8_t address, uint8_t size) {
-    spi.slave_select(MCP2515_SELECT_PINS);
+    spi_slave_select(MCP2515_SELECT_PINS);
 
-    spi.transmit(MCP2515_COMMAND_READ);
-    spi.transmit(address);
+    spi_transmit(MCP2515_COMMAND_READ);
+    spi_transmit(address);
 
-    uint8_t* response = spi.receive_multi(size);
+    uint8_t* response = spi_receive_multi(size);
 
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_deselect(MCP2515_SELECT_PINS);
 
     return response;
 }
@@ -21,47 +21,47 @@ void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size) {
         return;
     }
 
-    spi.slave_select(MCP2515_SELECT_PINS);
+    spi_slave_select(MCP2515_SELECT_PINS);
 
-    spi.transmit(MCP2515_COMMAND_WRITE);
-    spi.transmit(address);
+    spi_transmit(MCP2515_COMMAND_WRITE);
+    spi_transmit(address);
 
-    spi.transmit_multi(data, size);
+    spi_transmit_multi(data, size);
 
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_deselect(MCP2515_SELECT_PINS);
 }
 
 void mcp2515_reset() {
     gpio_initPin(&DDRB, MCP2515_CS, OUTPUT);
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_deselect(MCP2515_SELECT_PINS);
 
     // Reset the controller and enter Configuration mode
-    spi.slave_select(MCP2515_SELECT_PINS);
-    spi.transmit(MCP2515_COMMAND_RESET);
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_select(MCP2515_SELECT_PINS);
+    spi_transmit(MCP2515_COMMAND_RESET);
+    spi_slave_deselect(MCP2515_SELECT_PINS);
 }
 
 void mcp2515_requestToSend(const uint8_t tx_buffers) {
-    spi.slave_select(MCP2515_SELECT_PINS);
-    spi.transmit(MCP2515_COMMAND_RTS | (tx_buffers & 0b00000111));
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_select(MCP2515_SELECT_PINS);
+    spi_transmit(MCP2515_COMMAND_RTS | (tx_buffers & 0b00000111));
+    spi_slave_deselect(MCP2515_SELECT_PINS);
 }
 
 uint8_t mcp2515_readStatus() {
-    spi.slave_select(MCP2515_SELECT_PINS);
-    spi.transmit(MCP2515_COMMAND_READ_STATUS);
-    uint8_t response = spi.receive();
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_select(MCP2515_SELECT_PINS);
+    spi_transmit(MCP2515_COMMAND_READ_STATUS);
+    uint8_t response = spi_receive();
+    spi_slave_deselect(MCP2515_SELECT_PINS);
     return response;
 }
 
 void mcp2515_bitModify(const uint8_t address, uint8_t mask, const uint8_t data) {
-    spi.slave_select(MCP2515_SELECT_PINS);
-    spi.transmit(MCP2515_COMMAND_BIT_MODIFY);
-    spi.transmit(address);
-    spi.transmit(mask);
-    spi.transmit(data);
-    spi.slave_deselect(MCP2515_SELECT_PINS);
+    spi_slave_select(MCP2515_SELECT_PINS);
+    spi_transmit(MCP2515_COMMAND_BIT_MODIFY);
+    spi_transmit(address);
+    spi_transmit(mask);
+    spi_transmit(data);
+    spi_slave_deselect(MCP2515_SELECT_PINS);
 }
 
 void mcp2515_dumpMemory() {

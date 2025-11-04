@@ -40,45 +40,45 @@ void test_latch(){
     while (true) {
         for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
         printf(".");
-        sram.data[1] = 0xFF;
+        sram_data[1] = 0xFF;
         
         for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
         printf(".");
-        sram.data[2] = 0xFF;
+        sram_data[2] = 0xFF;
 
         for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
         printf(".");
-        sram.data[1] = 0;
+        sram_data[1] = 0;
 
         for (volatile uint32_t i = 0; i < iterations; i++); // Simple delay
         printf(".");
-        sram.data[2] = 0;
+        sram_data[2] = 0;
     }
 
     printf("\nLatch test completed.\n");
 }
 
 void etch_a_sketch() {
-    oled.clear();
+    oled_clear();
     int counter = 0;
     while (true) {
         if (io_readButtons(2)) {
-            oled.clear();
+            oled_clear();
         }
         uint8_t x = io_readTouchpad(0);
         uint8_t y = io_readTouchpad(1);
         uint8_t row = ((256 - y) * 8) / 32;
         uint8_t col = (x * 128) / 256;
         if (col > 127) col = 127;
-        oled.pos(row, col);
-        oled.draw_square(col, row, 3);
+        oled_pos(row, col);
+        oled_draw_square(col, row, 3);
         //_delay_us(10);
         if (io_readButtons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }
         if (counter++ > 20) {
             counter = 0;
-            oled.present();
+            oled_present();
         }
     }
 }
@@ -93,32 +93,32 @@ void pong() {
     uint8_t paddle2_y = 28;
     uint8_t score1 = 0;
     uint8_t score2 = 0;
-    oled.clear();
-    oled.present();
+    oled_clear();
+    oled_present();
 
     while (true) {
         // Display scores
-        oled.erase_area(8, 0, 120, 63); // Clear ball area
-        oled.pos(0, 50);
+        oled_erase_area(8, 0, 120, 63); // Clear ball area
+        oled_pos(0, 50);
 
-        oled.print(itoa(score1, NULL, 10));
-        oled.print(" - ");
-        oled.print(itoa(score2, NULL, 10));
+        oled_print(itoa(score1, NULL, 10));
+        oled_print(" - ");
+        oled_print(itoa(score2, NULL, 10));
 
         // Read joystick positions to move paddles
         paddle1_y = (256 - io_readJoystick(1)*12/10) * 8 / 32;
         paddle2_y = (256 - io_readTouchpad(1)) * 8 / 32;
 
         //draw paddles and ball
-        oled.erase_area(0, 0, 7, 63); // Clear left paddle area
-        oled.draw_square(0, paddle1_y, 8);
-        oled.draw_square(0, paddle1_y + 8, 8);
+        oled_erase_area(0, 0, 7, 63); // Clear left paddle area
+        oled_draw_square(0, paddle1_y, 8);
+        oled_draw_square(0, paddle1_y + 8, 8);
 
-        oled.erase_area(120, 0, 127, 63); // Clear right paddle area
-        oled.draw_square(120, paddle2_y, 8);
-        oled.draw_square(120, paddle2_y + 8, 8);
+        oled_erase_area(120, 0, 127, 63); // Clear right paddle area
+        oled_draw_square(120, paddle2_y, 8);
+        oled_draw_square(120, paddle2_y + 8, 8);
 
-        oled.circle(ball_x, ball_y, 3);
+        oled_circle(ball_x, ball_y, 3);
 
         // Update ball position
         ball_x += ball_dx;
@@ -158,20 +158,20 @@ void pong() {
 
         // Game over
         if (score1 >= 5 || score2 >= 5) {
-            oled.clear();
-            oled.pos(24, 32);
+            oled_clear();
+            oled_pos(24, 32);
             if (score1 >= 5) {
-                oled.print("Player 1 Wins!");
+                oled_print("Player 1 Wins!");
             } else {
-                oled.print("Player 2 Wins!");
+                oled_print("Player 2 Wins!");
             }
-            oled.present();
+            oled_present();
             _delay_ms(4000);
             break;
         }
 
         _delay_ms(10);
-        oled.present();
+        oled_present();
         if (io_readButtons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }

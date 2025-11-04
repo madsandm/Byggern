@@ -10,27 +10,22 @@
 #include <stdlib.h>
 #include "drivers/sram.h"
 
-typedef struct {
-    void (*init)();
-    void (*clear)();
-    void (*goto_line)(uint8_t line);
-    void (*clear_line)(uint8_t line);
-    void (*pos)(uint8_t row, uint8_t col);
-    void (*print)(const char* str);
-    void (*draw_pixel)(uint8_t x, uint8_t y);
-    void (*draw_square)(uint8_t x, uint8_t y, uint8_t size);
-    void (*line)(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
-    void (*circle)(int xm, int ym, int radius);
-    void (*erase_area)(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
+void oled_init();
+void oled_clear();
+void oled_goto_line(uint8_t line);
+void oled_clear_line(uint8_t line);
+void oled_pos(uint8_t row, uint8_t col);
+void oled_print(const char* str);
+void oled_draw_pixel(uint8_t x, uint8_t y);
+void oled_draw_square(uint8_t x, uint8_t y, uint8_t size);
+void oled_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
+void oled_circle(int xm, int ym, int radius);
+void oled_erase_area(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
 
-    // SRAM buffer functions
-    void (*sram_init)();
-    void (*sram_flush)();
-    void (*sram_swap)();
-    void (*present)();
-} IOLED;
-
-IOLED oled;
+void oled_sram_init();
+void oled_sram_flush();
+void oled_sram_swap();
+void oled_present();
 
 typedef uint8_t (*FramePtr)[128];
 #define FB1_BASE ((FramePtr)EXTERNAL_RAM_ADDRESS)
@@ -45,4 +40,4 @@ typedef struct {
 
 static Buffers fb;
 
-#endif
+#endif // OLED_H
