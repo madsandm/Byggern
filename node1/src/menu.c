@@ -38,12 +38,20 @@ static void menu_addChild(IMenuItem* parent, IMenuItem* child) {
     parent->children[parent->numberOfChildren - 1] = child;
 }
 
+static char* sram_strdup(char* str) {
+    char* p = sram.malloc(strlen(str) + 1);
+    if (p) {
+        strcpy(p, str);
+    }
+    return p;
+}
+
 static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
     IMenuItem* item = sram.malloc(sizeof(IMenuItem));
     if (item == NULL) {
         printf("COULD NOT ALLOCATE MEMORY\n");
     }
-    item->name = strdup(name);
+    item->name = sram_strdup(name);
     item->entryPoint = NULL;
     item->children = NULL;
     item->numberOfChildren = 0;
@@ -54,8 +62,8 @@ static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
 
 static void menu_init() {
     IMenuItem* gameMenu = menu_addItem(&mainMenu, "Games");
-    //IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
-    //IMenuItem* music = menu_addItem(&mainMenu, "Music");
+    IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
+    IMenuItem* music = menu_addItem(&mainMenu, "Music");
 
     IMenuItem* squash = menu_addItem(gameMenu, "Squash");
     IMenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
@@ -66,7 +74,10 @@ static void menu_init() {
     etchASketch->entryPoint = etch_a_sketch;
     pong_game->entryPoint = pong;
 
-    //menu_addItem(documentItem, "Epstein files");
+    menu_addItem(documentItem, "Epstein files");
+    IMenuItem* inside = menu_addItem(documentItem, "Inside jobs");
+    menu_addItem(inside, "9/11");
+    menu_addItem(inside, "3 mile island");
 }
 
 static void menu_render(IMenuItem* menuItem) {
