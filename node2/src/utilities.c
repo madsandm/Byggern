@@ -10,6 +10,7 @@
 #include "adc.h"
 
 uint32_t game_start_time;
+uint32_t game_time;
 uint32_t lives;
 uint32_t game_freeze;
 uint32_t game_freeze_time;
@@ -46,6 +47,18 @@ uint32_t can_joystick_to_us(){
         motorController_setTarget(x * 4 + 450);
         pwm_set_duty_us(1,y);
         set_solenoid(b);
+        score();
+        printf("%d\n", game_time);
         // printf("%d %d %d ", x,y,b);
     }
+}
+
+void score(){
+    game_time = totalMsecs(time_now()) - game_start_time;
+
+}
+
+void score_init(){
+    lives = 5;
+    game_start_time = totalMsecs(time_now());
 }

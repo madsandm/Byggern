@@ -4,11 +4,14 @@
 #include "sam.h"
 
 extern uint32_t game_start_time;
+extern uint32_t game_time;
 extern uint32_t lives;
 extern uint32_t game_freeze;
 extern uint32_t game_freeze_time;
 
 uint32_t can_joystick_to_us();
+void score();
+void score_init();
 
 
 

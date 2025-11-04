@@ -47,11 +47,8 @@ int main()
 
     
     score_init();
-    while(1){
-        can_joystick_to_us();
-        score();
-    }
-
+    can_joystick_to_us();
+    
     while (1)
     {
         /* code */
