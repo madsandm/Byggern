@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <avr/interrupt.h>
 
+bool packet_available = false;
 
 void canbus_init() {
     mcp2515_reset();
@@ -40,6 +42,10 @@ void canbus_init() {
     // Enter desired mode
     //mcp2515_bitModify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
     mcp2515_bitModify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
+
+    // Enable external interrupt on INT0 (PD2)
+    MCUCR |= (1 << ISC01); // Trigger INT0 on falling edge
+    GICR  |= (1 << INT0); // Enable INT0
 }
 
 void canbus_transmit(CanbusPacket packet) {
@@ -124,4 +130,8 @@ CanbusPacket canbus_createPacket(uint16_t id, uint8_t* data, uint8_t size) {
     }
 
     return ret;
+}
+
+ISR(INT0_vect) {
+    packet_available = true;
 }
