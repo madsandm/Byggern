@@ -2,7 +2,7 @@
 #include "drivers/spi.h"
 
 
-static uint8_t read_touchpad(uint8_t index) {
+uint8_t io_readTouchpad(uint8_t index) {
     // Implement touchpad reading functionality here
     uint8_t arr[3];
     spi.slave_select(&PORTB, IO_BOARD_CS);
@@ -16,7 +16,7 @@ static uint8_t read_touchpad(uint8_t index) {
     return arr[index];  // Return the first byte as the touchpad value
 }
 
-static uint8_t read_slider(uint8_t index) {
+uint8_t io_readSlider(uint8_t index) {
     // Implement slider reading functionality here
     uint8_t arr[2];
     spi.slave_select(&PORTB, IO_BOARD_CS);
@@ -30,7 +30,7 @@ static uint8_t read_slider(uint8_t index) {
     return arr[index];  // Return the first byte as the touchpad value
 }
 
-static uint8_t read_joystick(uint8_t index) {
+uint8_t io_readJoystick(uint8_t index) {
     // Implement joystick reading functionality here
     uint8_t arr[3];
     spi.slave_select(&PORTB, IO_BOARD_CS);
@@ -44,7 +44,7 @@ static uint8_t read_joystick(uint8_t index) {
     return arr[index];  // Return the first byte as the touchpad value
 }
 
-static void read_joystick_buffer(uint8_t* buffer) {
+void io_readJoystickBuffer(uint8_t* buffer) {
     spi.slave_select(&PORTB, IO_BOARD_CS);
     spi.transmit(0x03);
     _delay_us(40);
@@ -56,7 +56,7 @@ static void read_joystick_buffer(uint8_t* buffer) {
 }
 
 
-static uint8_t read_buttons(uint8_t index) {
+uint8_t io_readButtons(uint8_t index) {
     // Implement button reading functionality here
     uint8_t arr[3];
     spi.slave_select(&PORTB, IO_BOARD_CS);
@@ -71,7 +71,7 @@ static uint8_t read_buttons(uint8_t index) {
 }
 
 
-static void write_leds(uint8_t index, uint8_t value) {
+void io_writeLeds(uint8_t index, uint8_t value) {
     // Implement LED writing functionality herePIOB = (1<<13)
     spi.slave_select(&PORTB, IO_BOARD_CS);
     spi.transmit(0x05);
@@ -82,12 +82,3 @@ static void write_leds(uint8_t index, uint8_t value) {
     _delay_us(2);
     spi.slave_deselect(&PORTB, IO_BOARD_CS);
 }
-
-
-IIO io = {
-    .read_touchpad = read_touchpad,
-    .read_joystick = read_joystick,
-    .read_slider = read_slider,
-    .read_buttons = read_buttons,
-    .write_leds = write_leds
-};

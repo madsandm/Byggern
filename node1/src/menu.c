@@ -60,7 +60,7 @@ static IMenuItem* menu_addItem(IMenuItem* parent, char* name) {
     return item;
 }
 
-static void menu_init() {
+void menu_init() {
     IMenuItem* gameMenu = menu_addItem(&mainMenu, "Games");
     IMenuItem* documentItem = menu_addItem(&mainMenu, "Documents");
     IMenuItem* music = menu_addItem(&mainMenu, "Music");
@@ -98,13 +98,13 @@ static void menu_render(IMenuItem* menuItem) {
     oled.present();
 }
 
-static void menu_show(IMenuItem* menuItem) {
+void menu_show(IMenuItem* menuItem) {
     IMenuItem* currentMenu = menuItem;
     menu_render(currentMenu);
 
     DeviceDirection lastDirection = NEUTRAL;
     while (true) {
-        DeviceDirection direction = ioGrid.getDirection(joystick);
+        DeviceDirection direction = IODevice_getDirection(joystick);
         _delay_ms(100);
 
         if (direction != lastDirection) {
@@ -145,8 +145,3 @@ static void menu_show(IMenuItem* menuItem) {
         lastDirection = direction;
     }
 }
-
-IMenu menu = {
-    .init = menu_init,
-    .show = menu_show
-};

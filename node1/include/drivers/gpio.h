@@ -9,13 +9,9 @@ typedef enum PIN_MODE {
     OUTPUT = 1
 } PIN_MODE;
 
-typedef struct {
-    void (*initPin)(volatile uint8_t* port, uint8_t pin, PIN_MODE mode);
-    void (*togglePin)(volatile uint8_t* port, uint8_t pin);
-    void (*setPin)(volatile uint8_t* port, uint8_t pin);
-    void (*clearPin)(volatile uint8_t* port, uint8_t pin);
-} IGPIO;
-
-IGPIO GPIO;
+void gpio_initPin(volatile uint8_t* port, uint8_t pin, PIN_MODE mode);
+void gpio_togglePin(volatile uint8_t* port, uint8_t pin);
+void gpio_setPin(volatile uint8_t* port, uint8_t pin);
+void gpio_clearPin(volatile uint8_t* port, uint8_t pin);
 
 #endif // GPIO_H

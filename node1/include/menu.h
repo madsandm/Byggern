@@ -14,11 +14,7 @@ typedef struct IMenuItem {
 
 IMenuItem mainMenu;
 
-typedef struct {
-    void (*init)();
-    void (*show)(IMenuItem* menuItem);
-} IMenu;
-
-IMenu menu;
+void menu_init();
+void menu_show(IMenuItem* menuItem);
 
 #endif // MENU_H

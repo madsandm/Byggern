@@ -9,14 +9,14 @@ static char rx_buffer[RX_BUFFER_SIZE];
 static uint8_t rx_head = 0;
 static uint8_t rx_tail = 0;
 
-static int uart_transmit(const char data) {
+int uart_write(const char data) {
     while (!(UCSR0A & (1 << UDRE0)));
     UDR0 = data;
     return 0;
 }
 
-static int uart_putchar(const char data, FILE *stream) {
-    uart_transmit(data);
+int uart_putchar(const char data, FILE *stream) {
+    uart_write(data);
     return 0;
 }
 
@@ -24,7 +24,7 @@ static int uart_putchar(const char data, FILE *stream) {
  * Initializes the UART with the specified baud rate.
  * If enablePrintf is true, it sets up the UART for use with printf.
  */
-static void uart_init(const int ubbr, const bool enablePrintf) {
+void uart_init(const int ubbr, const bool enablePrintf) {
     // Set baud rate
     UBRR0H = (uint8_t)(ubbr >> 8);
     UBRR0L = (uint8_t)ubbr;
@@ -52,12 +52,12 @@ ISR(USART0_RXC_vect) {
     rx_head = (rx_head + 1) % RX_BUFFER_SIZE;
 }
 
-static bool uart_data_available() {
+bool uart_available() {
     return rx_head != rx_tail;
 }
 
-static char uart_read() {
-    if (!uart_data_available()) {
+char uart_read() {
+    if (!uart_available()) {
         printf("ERROR: No data available while trying to read UART\n");
         return 0; // No data available
     }
@@ -67,18 +67,9 @@ static char uart_read() {
     return data;
 }
 
-static void uart_println(const char* str) {
+void uart_println(const char* str) {
     printf("%s\n", str);
 }
 
-FILE uart_stream = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
-
-IUART uart = {
-    .init = uart_init,
-    .println = uart_println,
-    .write = uart_transmit,
-    .available = uart_data_available,
-    .read = uart_read,
-    .stream = &uart_stream
-};
+//FILE uart_stream = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 

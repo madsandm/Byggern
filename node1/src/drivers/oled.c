@@ -8,11 +8,11 @@
 #include <string.h>
 
 static void oled_init() {
-    GPIO.initPin(&DDRB, DISPLAY_CS, OUTPUT);
-    GPIO.initPin(&DDRB, DISPLAY_DC, OUTPUT);
+    gpio_initPin(&DDRB, DISPLAY_CS, OUTPUT);
+    gpio_initPin(&DDRB, DISPLAY_DC, OUTPUT);
 
     spi.slave_select(&PORTB, DISPLAY_CS);
-    GPIO.clearPin(&PORTB, DISPLAY_DC); // Command mode
+    gpio_clearPin(&PORTB, DISPLAY_DC); // Command mode
 
     const char setup_commands[] = {
         0xae, // Display off
@@ -42,7 +42,7 @@ static void oled_init() {
     send_data(spi.stream, setup_commands, sizeof(setup_commands));
 
     spi.slave_deselect(&PORTB, DISPLAY_CS);
-    GPIO.setPin(&PORTB, DISPLAY_DC); // Data mode
+    gpio_setPin(&PORTB, DISPLAY_DC); // Data mode
 }
 
 static void oled_sram_init() {
@@ -58,11 +58,11 @@ static void oled_sram_flush() {
     spi.slave_select(&PORTB, DISPLAY_CS);
     for (uint8_t page = 0; page < 8; page++) {
 
-        GPIO.clearPin(&PORTB, DISPLAY_DC);  // Command mode
+        gpio_clearPin(&PORTB, DISPLAY_DC);  // Command mode
         spi.transmit(0xb0 + page);          // Set page address
         spi.transmit(0x00);
         spi.transmit(0x10);
-        GPIO.setPin(&PORTB, DISPLAY_DC);    // Data mode
+        gpio_setPin(&PORTB, DISPLAY_DC);    // Data mode
         for (uint8_t seg = 0; seg < 128; seg++) {
             spi.transmit(fb.front[page][seg]);
         }

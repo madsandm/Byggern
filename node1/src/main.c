@@ -16,12 +16,12 @@
 #include "menu.h"
 
 int main() {
-    uart.init(MY_UBRR, true);
+    uart_init(MY_UBRR, true);
     sram.init();
-    adc.init();
+    adc_init();
     spi.init();
     oled.init();
-    canbus.init();
+    canbus_init();
 
     // Enable interrupts
     sei();
@@ -38,8 +38,8 @@ int main() {
     oled.sram_flush();
     
     
-    menu.init();
-    menu.show(&mainMenu);
+    menu_init();
+    menu_show(&mainMenu);
     
     int i = 0;
     bool toggle = true;

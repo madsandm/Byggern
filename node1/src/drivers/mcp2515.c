@@ -3,7 +3,7 @@
 #include "drivers/gpio.h"
 #include <stdlib.h>
 
-static uint8_t* mcp2515_read(uint8_t address, uint8_t size) {
+uint8_t* mcp2515_read(uint8_t address, uint8_t size) {
     spi.slave_select(MCP2515_SELECT_PINS);
 
     spi.transmit(MCP2515_COMMAND_READ);
@@ -16,7 +16,7 @@ static uint8_t* mcp2515_read(uint8_t address, uint8_t size) {
     return response;
 }
 
-static void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size) {
+void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size) {
     if (size <= 0) {
         return;
     }
@@ -31,8 +31,8 @@ static void mcp2515_write(uint8_t address, const uint8_t* data, uint8_t size) {
     spi.slave_deselect(MCP2515_SELECT_PINS);
 }
 
-static void mcp2515_reset() {
-    GPIO.initPin(&DDRB, MCP2515_CS, OUTPUT);
+void mcp2515_reset() {
+    gpio_initPin(&DDRB, MCP2515_CS, OUTPUT);
     spi.slave_deselect(MCP2515_SELECT_PINS);
 
     // Reset the controller and enter Configuration mode
@@ -41,13 +41,13 @@ static void mcp2515_reset() {
     spi.slave_deselect(MCP2515_SELECT_PINS);
 }
 
-static void mcp2515_request_to_send(const uint8_t tx_buffers) {
+void mcp2515_requestToSend(const uint8_t tx_buffers) {
     spi.slave_select(MCP2515_SELECT_PINS);
     spi.transmit(MCP2515_COMMAND_RTS | (tx_buffers & 0b00000111));
     spi.slave_deselect(MCP2515_SELECT_PINS);
 }
 
-static uint8_t mcp2515_read_status() {
+uint8_t mcp2515_readStatus() {
     spi.slave_select(MCP2515_SELECT_PINS);
     spi.transmit(MCP2515_COMMAND_READ_STATUS);
     uint8_t response = spi.receive();
@@ -55,7 +55,7 @@ static uint8_t mcp2515_read_status() {
     return response;
 }
 
-static void mcp2515_bit_modify(const uint8_t address, uint8_t mask, const uint8_t data) {
+void mcp2515_bitModify(const uint8_t address, uint8_t mask, const uint8_t data) {
     spi.slave_select(MCP2515_SELECT_PINS);
     spi.transmit(MCP2515_COMMAND_BIT_MODIFY);
     spi.transmit(address);
@@ -64,7 +64,7 @@ static void mcp2515_bit_modify(const uint8_t address, uint8_t mask, const uint8_
     spi.slave_deselect(MCP2515_SELECT_PINS);
 }
 
-static void mcp2515_dump_memory() {
+void mcp2515_dumpMemory() {
     
     printf("MCP2515 memory dump\n");
     for (char i = 0; i < 8; i++) {
@@ -76,13 +76,3 @@ static void mcp2515_dump_memory() {
         printf("\n");
     }
 }
-
-IMcp2515 mcp2515 = {
-    .reset = mcp2515_reset,
-    .read = mcp2515_read,
-    .write = mcp2515_write,
-    .read_status = mcp2515_read_status,
-    .bit_modify = mcp2515_bit_modify,
-    .request_to_send = mcp2515_request_to_send,
-    .dump_memory = mcp2515_dump_memory
-};

@@ -14,21 +14,21 @@
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
     for(uint8_t i = 0; i < times*2; i++){
-        GPIO.togglePin(&PORTB, PB0); // Toggle LED connected to PB0
+        gpio_togglePin(&PORTB, PB0); // Toggle LED connected to PB0
         for(volatile uint32_t i = 0; i < 30000; i++); // Simple delay
     }
 }
 
 void uart_led_command(){
-    while (uart.available()) {
-        char command = uart.read();
-        uart.write(command);
+    while (uart_available()) {
+        char command = uart_read();
+        uart_write(command);
         if (command == '1') {
-            GPIO.clearPin(&PORTB, PB0); // Turn on LED
-            uart.println("\nLED ON");
+            gpio_clearPin(&PORTB, PB0); // Turn on LED
+            uart_println("\nLED ON");
         } else if (command == '0') {
-            GPIO.setPin(&PORTB, PB0); // Turn off LED
-            uart.println("\nLED OFF");
+            gpio_setPin(&PORTB, PB0); // Turn off LED
+            uart_println("\nLED OFF");
         }
     }
 }
@@ -62,18 +62,18 @@ void etch_a_sketch() {
     oled.clear();
     int counter = 0;
     while (true) {
-        if (io.read_buttons(2)) {
+        if (io_readButtons(2)) {
             oled.clear();
         }
-        uint8_t x = io.read_touchpad(0);
-        uint8_t y = io.read_touchpad(1);
+        uint8_t x = io_readTouchpad(0);
+        uint8_t y = io_readTouchpad(1);
         uint8_t row = ((256 - y) * 8) / 32;
         uint8_t col = (x * 128) / 256;
         if (col > 127) col = 127;
         oled.pos(row, col);
         oled.draw_square(col, row, 3);
         //_delay_us(10);
-        if (io.read_buttons(0) & (1 << 5)) {
+        if (io_readButtons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }
         if (counter++ > 20) {
@@ -106,8 +106,8 @@ void pong() {
         oled.print(itoa(score2, NULL, 10));
 
         // Read joystick positions to move paddles
-        paddle1_y = (256 - io.read_joystick(1)*12/10) * 8 / 32;
-        paddle2_y = (256 - io.read_touchpad(1)) * 8 / 32;
+        paddle1_y = (256 - io_readJoystick(1)*12/10) * 8 / 32;
+        paddle2_y = (256 - io_readTouchpad(1)) * 8 / 32;
 
         //draw paddles and ball
         oled.erase_area(0, 0, 7, 63); // Clear left paddle area
@@ -172,7 +172,7 @@ void pong() {
 
         _delay_ms(10);
         oled.present();
-        if (io.read_buttons(0) & (1 << 5)) {
+        if (io_readButtons(0) & (1 << 5)) {
             break; // Exit the loop if button 0 is pressed
         }
     }
@@ -181,22 +181,22 @@ void pong() {
 
 void can_joystick(){
     while (true){
-        IPosition position = ioGrid.getPosition(joystick);
-        uint8_t j_h = io.read_joystick(0);
-        uint8_t j_v = io.read_joystick(1);
-        uint8_t j_b = io.read_joystick(2);
+        IPosition position = IODevice_getPosition(joystick);
+        uint8_t j_h = io_readJoystick(0);
+        uint8_t j_v = io_readJoystick(1);
+        uint8_t j_b = io_readJoystick(2);
         uint8_t data[3] = {
             position.x + 128,
             position.y + 128,
             j_b
         };
-        canbus.transmit(canbus.create_packet(24, data, sizeof(data)));
+        canbus_transmit(canbus_createPacket(24, data, sizeof(data)));
 
-        if (io.read_buttons(0) & (1 << 5)) {
+        if (io_readButtons(0) & (1 << 5)) {
             printf("breaking loop");
             break; // Exit the loop if button 0 is pressed
         }
-        _delay_ms(60);
+        _delay_ms(100);
         printf("sent joystick\n");
     }
 }

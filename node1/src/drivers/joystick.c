@@ -23,7 +23,7 @@ IODevice touchpad = {
     .maxY = 236
 };
 
-static void calibrate(IODevice device) {
+void IODevice_calibrate(IODevice device) {
     printf("Starting Grid Device calibration...\n");
 
     uint8_t x_min = 255, x_max = 0;
@@ -31,10 +31,10 @@ static void calibrate(IODevice device) {
 
     while (true) {
         for(uint32_t i = 0; i < 40000; i++) {
-            adc.read();
+            adc_read();
 
-            uint8_t x_value = adc.getChannel(device.xChannel);
-            uint8_t y_value = adc.getChannel(device.yChannel);
+            uint8_t x_value = adc_getChannel(device.xChannel);
+            uint8_t y_value = adc_getChannel(device.yChannel);
 
             if(x_value < x_min) x_min = x_value;
             if(x_value > x_max) x_max = x_value;
@@ -48,12 +48,12 @@ static void calibrate(IODevice device) {
     }
 }
 
-static IPosition getPosition(IODevice device) {
+IPosition IODevice_getPosition(IODevice device) {
     IPosition pos;
 
-    adc.read();
-    int32_t x_value = (int32_t)adc.getChannel(device.xChannel);
-    int32_t y_value = (int32_t)adc.getChannel(device.yChannel);
+    adc_read();
+    int32_t x_value = (int32_t)adc_getChannel(device.xChannel);
+    int32_t y_value = (int32_t)adc_getChannel(device.yChannel);
 
     pos.x = (int8_t)(
         (x_value - device.minX) * 200 / (device.maxX - device.minX) - 100
@@ -65,8 +65,8 @@ static IPosition getPosition(IODevice device) {
     return pos; // returns position in range -100 to 100
 }
 
-static DeviceDirection getDirection(IODevice device) {
-    IPosition pos = getPosition(device);
+DeviceDirection IODevice_getDirection(IODevice device) {
+    IPosition pos = IODevice_getPosition(device);
 
     if (abs(pos.x) < JOYSTICK_NEUTRAL_ZONE && abs(pos.y) < JOYSTICK_NEUTRAL_ZONE) {
         return NEUTRAL;
@@ -76,9 +76,3 @@ static DeviceDirection getDirection(IODevice device) {
         return (pos.y > 0) ? UP : DOWN;
     }
 }
-
-IIOGrid ioGrid = {
-    .calibrate = calibrate,
-    .getPosition = getPosition,
-    .getDirection = getDirection
-};

@@ -2,10 +2,11 @@
 #include "drivers/mcp2515.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 
-static void canbus_init() {
-    mcp2515.reset();
+void canbus_init() {
+    mcp2515_reset();
 
     // printf("Canbus setup:\n");
     // printf("PropSeg = %d\n", CANBUS_PROPSEG);
@@ -26,22 +27,22 @@ static void canbus_init() {
     const uint8_t cnf3 = (PHSEG2 << CNF3_PHSEG2);
 
     // Set CAN bus bit timings
-    mcp2515.bit_modify(CNF1, 0xff, cnf1);
-    mcp2515.bit_modify(CNF2, 0xff, cnf2);
-    mcp2515.bit_modify(CNF3, 0xff, cnf3);
+    mcp2515_bitModify(CNF1, 0xff, cnf1);
+    mcp2515_bitModify(CNF2, 0xff, cnf2);
+    mcp2515_bitModify(CNF3, 0xff, cnf3);
 
     // Enable interrupts
-    mcp2515.bit_modify(CANINTE, 1 << RX0IE, 0xff);
+    mcp2515_bitModify(CANINTE, 1 << RX0IE, 0xff);
 
     // setup receive criteria
-    mcp2515.bit_modify(RXB0 | TXBnCTRL, 0b01100100, 0b01100000); // Accept all, without rollover
+    mcp2515_bitModify(RXB0 | TXBnCTRL, 0b01100100, 0b01100000); // Accept all, without rollover
 
     // Enter desired mode
-    //mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
-    mcp2515.bit_modify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
+    //mcp2515_bitModify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
+    mcp2515_bitModify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
 }
 
-static void canbus_transmit(CanbusPacket packet) {
+void canbus_transmit(CanbusPacket packet) {
     uint8_t stdIDHigh = (packet.id >> 3) & 0xFF;
     uint8_t stdIDLow = (packet.id & 0b111) << 5;
 
@@ -57,15 +58,15 @@ static void canbus_transmit(CanbusPacket packet) {
         packetSize
     };
 
-    mcp2515.write(TXB0 | TXBnSIDH, header, sizeof(header));
+    mcp2515_write(TXB0 | TXBnSIDH, header, sizeof(header));
 
-    mcp2515.write(TXB0 | TXBnD0, packet.data, packetSize);
+    mcp2515_write(TXB0 | TXBnD0, packet.data, packetSize);
 
-    mcp2515.request_to_send(0b001);
+    mcp2515_requestToSend(0b001);
 }
 
-static CanbusPacket canbus_receive() {
-    uint8_t* frame = mcp2515.read(RXB0 | TXBnSIDH, 13);
+CanbusPacket canbus_receive() {
+    uint8_t* frame = mcp2515_read(RXB0 | TXBnSIDH, 13);
 
     uint16_t id = frame[0];
     id = (id << 3) | (frame[1] >> 5);
@@ -85,7 +86,7 @@ static CanbusPacket canbus_receive() {
     return ret;
 }
 
-static CanbusPacket canbus_create_packet_from_string(uint16_t id, char* str) {
+CanbusPacket canbus_createPacketFromString(uint16_t id, char* str) {
     CanbusPacket ret = {
         .id = id,
         .size = 8
@@ -108,7 +109,7 @@ static CanbusPacket canbus_create_packet_from_string(uint16_t id, char* str) {
     return ret;
 }
 
-static CanbusPacket canbus_create_packet(uint16_t id, uint8_t* data, uint8_t size) {
+CanbusPacket canbus_createPacket(uint16_t id, uint8_t* data, uint8_t size) {
     if (size > 8) {
         printf("Canbus data to send is too large.");
     }
@@ -124,11 +125,3 @@ static CanbusPacket canbus_create_packet(uint16_t id, uint8_t* data, uint8_t siz
 
     return ret;
 }
-
-ICanbus canbus = {
-    .init = canbus_init,
-    .transmit = canbus_transmit,
-    .receive = canbus_receive,
-    .create_packet_from_string = canbus_create_packet_from_string,
-    .create_packet = canbus_create_packet
-};

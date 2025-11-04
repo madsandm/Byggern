@@ -6,14 +6,10 @@
 
 #include <stdint.h>
 
-typedef struct {
-    void (*init)();
-    void (*read)();
-    uint8_t (*getChannel)(uint8_t channel);
-    uint8_t (*readChannel)(uint8_t channel);
-    void (*printChannels)();
-} IADC;
-
-IADC adc;
+void adc_init();
+void adc_read();
+uint8_t adc_getChannel(uint8_t channel);
+uint8_t adc_readChannel(uint8_t channel);
+void adc_printChannels();
 
 #endif // ADC_H

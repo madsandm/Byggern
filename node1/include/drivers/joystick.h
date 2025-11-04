@@ -31,13 +31,8 @@ typedef enum {
     NEUTRAL
 } DeviceDirection;
 
-typedef struct {
-    void (*calibrate)(IODevice device);
-    IPosition (*getPosition)(IODevice device);
-    DeviceDirection (*getDirection)(IODevice device);
-} IIOGrid;
-
-
-IIOGrid ioGrid;
+void IODevice_calibrate(IODevice device);
+IPosition IODevice_getPosition(IODevice device);
+DeviceDirection IODevice_getDirection(IODevice device);
 
 #endif // JOYSTICK_H
