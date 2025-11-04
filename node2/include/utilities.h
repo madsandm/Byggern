@@ -10,7 +10,7 @@ extern uint32_t game_freeze;
 extern uint32_t game_freeze_time;
 
 uint32_t can_joystick_to_us();
-void score();
+void score(uint32_t);
 void score_init();
 
 

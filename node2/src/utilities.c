@@ -32,14 +32,14 @@ uint32_t can_joystick_to_us(){
             RX_MB1_FLAG = 0;
             CAN0->CAN_IER = CAN_IDR_MB1;
             //printf("Received message in MB1\n\r");
-            can_send(&msg_tx, 0);
+            //can_send(&msg_tx, 0);
         } 
         if (RX_MB2_FLAG){
             can_receive(&msg_rx, 2);
             RX_MB2_FLAG = 0;
             CAN0->CAN_IER = CAN_IDR_MB2;
             //printf("Received message in MB2\n\r");
-            can_send(&msg_tx, 0);
+            //can_send(&msg_tx, 0);
         }
         x = -(msg_rx.data[0]-130);
         y = ((msg_rx.data[1]) * 47 + 9000)/10;
@@ -47,18 +47,36 @@ uint32_t can_joystick_to_us(){
         motorController_setTarget(x * 4 + 450);
         pwm_set_duty_us(1,y);
         set_solenoid(b);
-        score();
-        printf("%d\n", game_time);
+        score(b);
         // printf("%d %d %d ", x,y,b);
     }
 }
 
-void score(){
-    game_time = totalMsecs(time_now()) - game_start_time;
-
+void score(uint32_t b){
+    game_time = totalSeconds(time_now()) - game_start_time;
+    
+    if (!game_freeze && IR_flag == 1){
+        lives -= 1;
+        IR_flag = 0;
+        game_freeze = 1;
+    }
+    if (b == 1){
+        game_freeze = 0;
+        printf("game unfreeze\n");
+    }
+    
+    CAN_MESSAGE msg_tx;
+    msg_tx.id = 1;
+    msg_tx.data_length = 3;
+    msg_tx.data[0] = (uint8_t)(game_time & 0xFF);
+    msg_tx.data[1] = (uint8_t)(game_time >> 8);
+    msg_tx.data[2] = lives;
+    can_send(&msg_tx,0);
+    
+    printf("%d %d\n", game_time, lives);
 }
 
 void score_init(){
     lives = 5;
-    game_start_time = totalMsecs(time_now());
+    game_start_time = totalSeconds(time_now());
 }
