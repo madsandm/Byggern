@@ -1,6 +1,7 @@
 #include "sam.h"
 #include "pwm.h"
 
+#define MOTOR_LIMIT 999
 
 void motor_driver_init(){
     PIOC->PIO_PER = PIO_PC23;
@@ -10,12 +11,12 @@ void motor_driver_init(){
 }
 
 void motor_driver_set_vel(int x){
-    if (x > 1000) {
-        x = 1000;
+    if (x > MOTOR_LIMIT) {
+        x = MOTOR_LIMIT;
     }
 
-    if (x < -1000) {
-        x = -1000;
+    if (x < -MOTOR_LIMIT) {
+        x = -MOTOR_LIMIT;
     }
 
     if (x < 0){
