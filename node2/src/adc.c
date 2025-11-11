@@ -34,8 +34,8 @@ void ADC_Handler(void) {
     uint32_t isr = ADC->ADC_ISR;
 
     if (isr & ADC_ISR_COMPE) {
-        NVIC_DisableIRQ(ADC_IRQn);
         IR_flag = 1;
+        ADC->ADC_IDR = ADC_IDR_COMPE;
         printf("flag triggered");
     }
 }

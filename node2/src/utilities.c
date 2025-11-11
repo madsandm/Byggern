@@ -10,6 +10,7 @@
 #include "adc.h"
 #include "game_state.h"
 
+
 uint32_t game_start_time;
 uint32_t game_time;
 uint32_t lives;
@@ -40,7 +41,7 @@ uint32_t can_joystick_to_us(){
         }
 
         if (new_message) {
-            printf("New message received, id: %d\n", msg_rx.id);
+            //printf("New message received, id: %d\n", msg_rx.id);
 
             // TODO: Fix numbers to match simething that makes sense and abstract away hardware concepts
             if (msg_rx.id == CANMSG_JOYSTICK) {
@@ -69,17 +70,19 @@ uint32_t can_joystick_to_us(){
 
 void score(uint32_t button){
     game_time = totalSeconds(time_now()) - game_start_time;
+
+    if (button == 1){
+        game_freeze = 0;
+        printf("game unfreeze\n");
+        
+        ADC->ADC_ISR; // Clear interrupt status
+        ADC->ADC_IER = ADC_IER_COMPE; // Re-enable comparison interrupt
+    }
     
     if (!game_freeze && IR_flag == 1){
         lives -= 1;
         IR_flag = 0;
         game_freeze = 1;
-
-        NVIC_EnableIRQ(ADC_IRQn);
-    }
-    if (button == 1){
-        game_freeze = 0;
-        printf("game unfreeze\n");
     }
     
     CAN_MESSAGE msg_tx;
@@ -91,7 +94,7 @@ void score(uint32_t button){
 
     if (!can_message_equal(&msg_tx, &last_msg_tx)) {
         can_send(&msg_tx,0);
-        printf("Canbus transmit: %d %d\n", game_time, lives);
+        //printf("Canbus transmit: %d %d\n", game_time, lives);
         can_copy_message(&msg_tx, &last_msg_tx);
     }
 
