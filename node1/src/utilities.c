@@ -206,8 +206,9 @@ void squash_game(){
     can_msg.size = 0;
 
     canbus_transmit(&can_msg);
-
     squash_oled_score(0, 0);
+
+    while (canbus_try_receive(&can_msg)) {}
 
     while (true){
         IPosition position = IODevice_getPosition(joystick);
@@ -240,8 +241,20 @@ void squash_game(){
                 printf("Data[%d]: %d\n", i, can_msg.data[i]);
             }
             uint16_t time = can_msg.data[0] + ((uint16_t)can_msg.data[1] << 8);
-            uint8_t life = can_msg.data[2];
+            int8_t life = can_msg.data[2];
             squash_oled_score(time, life);
+            if (life <= 0) {
+                oled_clear();
+                oled_pos(16, 32);
+                oled_print("Game Over ");
+                char buffer[10];
+                snprintf(buffer, sizeof(buffer), "%d", time);
+                oled_print("Score: ");
+                oled_print(buffer);
+                oled_present();
+                _delay_ms(4000);
+                break;
+            }
         }
     }
 }

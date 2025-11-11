@@ -67,7 +67,6 @@ void menu_init() {
 
     IMenuItem* squash = menu_addItem(gameMenu, "Squash");
     IMenuItem* etchASketch = menu_addItem(gameMenu, "Etch a sketch");
-    menu_addItem(gameMenu, "Snake");
     IMenuItem* pong_game = menu_addItem(gameMenu, "Pong");
 
     squash->entryPoint = squash_game;
