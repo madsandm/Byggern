@@ -46,7 +46,7 @@ uint32_t can_joystick_to_us(){
             // TODO: Fix numbers to match simething that makes sense and abstract away hardware concepts
             if (msg_rx.id == CANMSG_JOYSTICK) {
                 x = -(msg_rx.data[0]-130);
-                y = ((msg_rx.data[1]) * 47 + 9000)/10;
+                y = ((msg_rx.data[1]) * 39 + 10010)/10;
                 button = msg_rx.data[2];
             }
 

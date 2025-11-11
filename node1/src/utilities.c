@@ -211,13 +211,13 @@ void squash_game(){
 
     while (true){
         IPosition position = IODevice_getPosition(joystick);
-        uint8_t j_h = io_readJoystick(0);
-        uint8_t j_v = io_readJoystick(1);
-        uint8_t j_b = io_readJoystick(2);
+        //uint8_t j_h = io_readJoystick(0);
+        //uint8_t j_v = io_readTouchpad(0);
+        uint8_t j_b = (io_readButtons(0) & (1 << 0));
 
         can_msg.id = CANMSG_JOYSTICK;
         can_msg.data[0] = position.x + 128;
-        can_msg.data[1] = position.y + 128;
+        can_msg.data[1] = -io_readTouchpad(0);
         can_msg.data[2] = j_b;
         can_msg.size = 3;
 
