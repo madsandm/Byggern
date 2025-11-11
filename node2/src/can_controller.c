@@ -204,3 +204,25 @@ uint8_t can_receive(CAN_MESSAGE* can_msg, uint8_t rx_mb_id)
 	}
 }
 
+void can_copy_message(CAN_MESSAGE* source, CAN_MESSAGE* target) {
+	target->id = source->id;
+	target->data_length = source->data_length;
+
+	for (int i = 0; i < 8; i++) {
+		target->data[i] = source->data[i];
+	}
+}
+
+bool can_message_equal(CAN_MESSAGE* lhs, CAN_MESSAGE* rhs) {
+	if (lhs->id != rhs->id || lhs->data_length != rhs->data_length) {
+		return false;
+	}
+
+	for (int i = 0; i < lhs->data_length; i++) {
+		if (lhs->data[i] != rhs->data[i]) {
+			return false;
+		}
+	}
+
+	return true;
+}
