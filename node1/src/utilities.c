@@ -201,7 +201,6 @@ void squash_oled_score(uint16_t time, uint8_t life) {
 void squash_game(){
 
     squash_oled_score(0, 0);
-
     CanbusPacket rx_packet;
     while (true){
         IPosition position = IODevice_getPosition(joystick);
@@ -221,21 +220,19 @@ void squash_game(){
         }
         _delay_ms(100);
         printf("sent joystick\n");
-        if (packet_available) {
-            rx_packet = canbus_receive();
-            packet_available = false;
-            mcp2515_bitModify(CANINTF, 1 << RX0IF, 0); // Clear interrupt flag
-            printf("Received CAN packet - ID: %d, Size: %d, Data: ", rx_packet.id, rx_packet.size);
-            for (uint8_t i = 0; i < rx_packet.size; i++) {
-                printf("%d ", rx_packet.data[i]);
-            }
-            printf("\n");
+        
+        if (canbus_try_receive(&rx_packet)) {
+            continue;
+        }
 
-            if (rx_packet.id == 1) {
-                uint16_t time = rx_packet.data[0] + ((uint16_t)rx_packet.data[1] << 8);
-                uint8_t life = rx_packet.data[2];
-                squash_oled_score(time, life);
+        if (rx_packet.id == 1) {
+            printf("received packet\n");
+            for (int i = 0; i < rx_packet.size; i++) {
+                printf("Data[%d]: %d\n", i, rx_packet.data[i]);
             }
+            uint16_t time = rx_packet.data[0] + ((uint16_t)rx_packet.data[1] << 8);
+            uint8_t life = rx_packet.data[2];
+            squash_oled_score(time, life);
         }
     }
 }

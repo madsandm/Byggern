@@ -1,22 +1,14 @@
 #include "drivers/canbus.h"
 #include "drivers/mcp2515.h"
+#include "drivers/gpio.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <avr/interrupt.h>
 
-bool packet_available = false;
 
 void canbus_init() {
     mcp2515_reset();
-
-    // printf("Canbus setup:\n");
-    // printf("PropSeg = %d\n", CANBUS_PROPSEG);
-    // printf("PS1 = %d\n", CANBUS_PS1);
-    // printf("PS2 = %d\n", CANBUS_PS2);
-    // printf("BRP = %d\n", CANBUS_BRP);
-    // printf("SJW = %d\n", CANBUS_BRP);
-    // printf("NBT = %d\n", CANBUS_NBT);
 
     const uint8_t PHSEG2 = CANBUS_PS2 - 1;
     const uint8_t PRSEG = CANBUS_PROPSEG - 1;
@@ -43,9 +35,8 @@ void canbus_init() {
     //mcp2515_bitModify(CANCTRL, 7 << 5, MCP2515_MODE_LOOPBACK << 5);
     mcp2515_bitModify(CANCTRL, 7 << 5, MCP2515_MODE_NORMAL << 5);
 
-    // Enable external interrupt on INT0 (PD2)
-    MCUCR |= (1 << ISC01); // Trigger INT0 on falling edge
-    GICR  |= (1 << INT0); // Enable INT0
+    // Enable input on (PD2) (not interrupt driven)
+    gpio_initPin(&DDRD, PD2, INPUT);
 }
 
 void canbus_transmit(CanbusPacket packet) {
@@ -71,25 +62,29 @@ void canbus_transmit(CanbusPacket packet) {
     mcp2515_requestToSend(0b001);
 }
 
-CanbusPacket canbus_receive() {
-    uint8_t* frame = mcp2515_read(RXB0 | TXBnSIDH, 13);
+uint8_t canbus_try_receive(CanbusPacket *out_packet) {
+    if (gpio_readPin(&PIND, PD2)) {
+        return 1;
+    }
+
+    uint8_t frame[13];
+    mcp2515_read_into(frame, RXB0 | TXBnSIDH, 13);
 
     uint16_t id = frame[0];
     id = (id << 3) | (frame[1] >> 5);
 
     uint8_t size = frame[4] & 0x0F;
 
-    CanbusPacket ret = {
-        .id = id,
-        .size = size,
-    };
+    out_packet->id = id;
+    out_packet->size = size;
 
     for (uint8_t i = 0; i < size; i++) {
-        ret.data[i] = frame[5 + i];
+        out_packet->data[i] = frame[5 + i];
     }
-    free(frame);
 
-    return ret;
+    mcp2515_bitModify(CANINTF, 1 << RX0IF, 0); // Clear receive flag
+
+    return 0;
 }
 
 CanbusPacket canbus_createPacketFromString(uint16_t id, char* str) {
@@ -130,8 +125,4 @@ CanbusPacket canbus_createPacket(uint16_t id, uint8_t* data, uint8_t size) {
     }
 
     return ret;
-}
-
-ISR(INT0_vect) {
-    packet_available = true;
 }

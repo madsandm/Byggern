@@ -16,3 +16,7 @@ void gpio_setPin(volatile uint8_t* port, uint8_t pin) {
 void gpio_clearPin(volatile uint8_t* port, uint8_t pin) {
     *port &= ~(1 << pin);
 }
+
+uint8_t gpio_readPin(volatile uint8_t* port, uint8_t pin) {
+    return ((*port) & (1 << pin));
+}

@@ -48,11 +48,9 @@ typedef struct CanbusPacket {
     uint8_t data[8];
 } CanbusPacket;
 
-extern bool packet_available;
-
 void canbus_init();
 void canbus_transmit(CanbusPacket packet);
-CanbusPacket canbus_receive();
+uint8_t canbus_try_receive(CanbusPacket *out_packet);
 CanbusPacket canbus_createPacketFromString(uint16_t id, char* str);
 CanbusPacket canbus_createPacket(uint16_t id, uint8_t* data, uint8_t size);
 
