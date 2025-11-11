@@ -8,6 +8,7 @@
 #include "can_interrupt.h"
 #include "time.h"
 #include "adc.h"
+#include "game_state.h"
 
 uint32_t game_start_time;
 uint32_t game_time;
@@ -19,7 +20,7 @@ CAN_MESSAGE last_msg_tx;
 uint32_t can_joystick_to_us(){
     volatile int x;
     volatile uint32_t y;
-    volatile uint32_t b;
+    volatile uint32_t button;
     CAN_MESSAGE msg_tx;
     bool new_message = false;
     msg_tx.id = 1;
@@ -44,20 +45,31 @@ uint32_t can_joystick_to_us(){
 
         if (new_message) {
             printf("New message received, id: %d\n", msg_rx.id);
+
+            // TODO: Fix numbers to match simething that makes sense and abstract away hardware concepts
+            if (msg_rx.id == CANMSG_JOYSTICK) {
+                x = -(msg_rx.data[0]-130);
+                y = ((msg_rx.data[1]) * 47 + 9000)/10;
+                button = msg_rx.data[2];
+            }
+
+            if (msg_rx.id == CANMSG_SCOREBOARD_RESET) {
+                x = 130;
+                y = 450;
+                button = 0;
+                score_init();
+            }
         }
 
-        x = -(msg_rx.data[0]-130);
-        y = ((msg_rx.data[1]) * 47 + 9000)/10;
-        b = msg_rx.data[2];
         motorController_setTarget(x * 4 + 450);
         pwm_set_duty_us(1,y);
-        set_solenoid(b);
-        score(b);
-        // printf("%d %d %d ", x,y,b);
+        set_solenoid(button);
+        score(button);
+        // printf("%d %d %d ", x,y,button);
     }
 }
 
-void score(uint32_t b){
+void score(uint32_t button){
     game_time = totalSeconds(time_now()) - game_start_time;
     
     if (!game_freeze && IR_flag == 1){
@@ -65,7 +77,7 @@ void score(uint32_t b){
         IR_flag = 0;
         game_freeze = 1;
     }
-    if (b == 1){
+    if (button == 1){
         game_freeze = 0;
         printf("game unfreeze\n");
     }

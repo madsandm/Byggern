@@ -39,13 +39,13 @@ void canbus_init() {
     gpio_initPin(&DDRD, PD2, INPUT);
 }
 
-void canbus_transmit(CanbusPacket packet) {
-    uint8_t stdIDHigh = (packet.id >> 3) & 0xFF;
-    uint8_t stdIDLow = (packet.id & 0b111) << 5;
+void canbus_transmit(CanbusPacket* packet) {
+    uint8_t stdIDHigh = (packet->id >> 3) & 0xFF;
+    uint8_t stdIDLow = (packet->id & 0b111) << 5;
 
     // TODO: handle messages > 8
 
-    uint8_t packetSize = packet.size & 0x0f;
+    uint8_t packetSize = packet->size & 0x0f;
 
     uint8_t header[] = {
         stdIDHigh,
@@ -57,7 +57,7 @@ void canbus_transmit(CanbusPacket packet) {
 
     mcp2515_write(TXB0 | TXBnSIDH, header, sizeof(header));
 
-    mcp2515_write(TXB0 | TXBnD0, packet.data, packetSize);
+    mcp2515_write(TXB0 | TXBnD0, packet->data, packetSize);
 
     mcp2515_requestToSend(0b001);
 }

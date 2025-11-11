@@ -11,6 +11,7 @@
 #include "drivers/joystick.h"
 #include <stdlib.h>
 #include "drivers/mcp2515.h"
+#include "game_state.h"
 
 void blinky(uint8_t times){
     // Implement LED blinking functionality here
@@ -199,20 +200,28 @@ void squash_oled_score(uint16_t time, uint8_t life) {
 }
 
 void squash_game(){
+    CanbusPacket can_msg;
+
+    can_msg.id = CANMSG_SCOREBOARD_RESET;
+    can_msg.size = 0;
+
+    canbus_transmit(&can_msg);
 
     squash_oled_score(0, 0);
-    CanbusPacket rx_packet;
+
     while (true){
         IPosition position = IODevice_getPosition(joystick);
         uint8_t j_h = io_readJoystick(0);
         uint8_t j_v = io_readJoystick(1);
         uint8_t j_b = io_readJoystick(2);
-        uint8_t data[3] = {
-            position.x + 128,
-            position.y + 128,
-            j_b
-        };
-        canbus_transmit(canbus_createPacket(24, data, sizeof(data)));
+
+        can_msg.id = CANMSG_JOYSTICK;
+        can_msg.data[0] = position.x + 128;
+        can_msg.data[1] = position.y + 128;
+        can_msg.data[2] = j_b;
+        can_msg.size = 3;
+
+        canbus_transmit(&can_msg);
 
         if (io_readButtons(0) & (1 << 5)) {
             printf("breaking loop");
@@ -221,17 +230,17 @@ void squash_game(){
         _delay_ms(100);
         printf("sent joystick\n");
         
-        if (canbus_try_receive(&rx_packet)) {
+        if (canbus_try_receive(&can_msg)) {
             continue;
         }
 
-        if (rx_packet.id == 1) {
+        if (can_msg.id == CANMSG_SCOREBOARD_DATA) {
             printf("received packet\n");
-            for (int i = 0; i < rx_packet.size; i++) {
-                printf("Data[%d]: %d\n", i, rx_packet.data[i]);
+            for (int i = 0; i < can_msg.size; i++) {
+                printf("Data[%d]: %d\n", i, can_msg.data[i]);
             }
-            uint16_t time = rx_packet.data[0] + ((uint16_t)rx_packet.data[1] << 8);
-            uint8_t life = rx_packet.data[2];
+            uint16_t time = can_msg.data[0] + ((uint16_t)can_msg.data[1] << 8);
+            uint8_t life = can_msg.data[2];
             squash_oled_score(time, life);
         }
     }

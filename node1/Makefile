@@ -17,6 +17,7 @@ TARGET_DEVICE := m162
 
 CC := avr-gcc
 CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -Iinclude
+CFLAGS += -I../shared
 
 OBJECT_FILES := $(patsubst $(SOURCE_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 OBJ_DIRS := $(sort $(dir $(OBJECT_FILES)))

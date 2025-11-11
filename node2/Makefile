@@ -24,6 +24,7 @@ LDFLAGS:= -T$(LDSCRIPT) -mthumb -mcpu=cortex-m3 -Wl,--gc-sections
 CFLAGS:= -mcpu=cortex-m3 -mthumb -g -std=c11 -MMD
 CFLAGS+= -I include -I sam -I sam/sam3x/include -I sam/sam3x/source -I sam/cmsis -I .
 CFLAGS+= -D $(MCUTYPE)
+CFLAGS += -I../shared
 
 .DEFAULT_GOAL := $(ELF)
 # compile and generate dependancy info
