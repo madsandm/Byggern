@@ -89,4 +89,5 @@ void score(uint32_t b){
 void score_init(){
     lives = 5;
     game_start_time = totalSeconds(time_now());
+    game_freeze = 0;
 }
