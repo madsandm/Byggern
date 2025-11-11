@@ -13,17 +13,60 @@
 uint32_t game_start_time;
 uint32_t game_time;
 uint32_t lives;
-uint32_t game_freeze;
 uint32_t game_freeze_time;
 CAN_MESSAGE last_msg_tx;
+GAME_STATE game_state;
+
+void transition_to_state(GAME_STATE state) {
+    if (game_state == state && state != IDLE) {
+        return;
+    }
+    printf("Switching state %d -> %d\n", game_state, state);
+
+    // CLEAN UP LAST STATE
+    switch(game_state) {
+        case IDLE:
+            break;
+        case PLAYING:
+            IR_flag = 0;
+            break;
+        case LIFE_LOST:
+            break;
+        case GAME_OVER:
+            break;
+    }
+
+    // INIT NEW STATE
+    switch(state) {
+        case IDLE:
+            score_init();
+            motorController_setTarget(500);
+            set_solenoid(0);
+            break;
+        case PLAYING:
+            NVIC_EnableIRQ(ADC_IRQn);
+            IR_flag = 0;
+            break;
+        case LIFE_LOST:
+            lives--;
+            set_solenoid(0);
+            break;
+        case GAME_OVER:
+            break;
+    }
+    game_state = state;
+}
 
 uint32_t can_joystick_to_us(){
-    volatile int x;
-    volatile uint32_t y;
-    volatile uint32_t button;
+    transition_to_state(IDLE);
+
+    int x;
+    uint32_t y;
+    uint32_t button;
+
     CAN_MESSAGE msg_tx;
     bool new_message = false;
-    
+
     while (1) {
         CAN_MESSAGE msg_rx;
         if (RX_MB1_FLAG){
@@ -40,51 +83,78 @@ uint32_t can_joystick_to_us(){
         }
 
         if (new_message) {
-            printf("New message received, id: %d\n", msg_rx.id);
+            printf("New message received, id: %d ", msg_rx.id);
 
-            // TODO: Fix numbers to match simething that makes sense and abstract away hardware concepts
+            if (msg_rx.id == CANMSG_SCOREBOARD_RESET) {
+                transition_to_state(IDLE);
+                printf("RESETTING...");
+            }
+
             if (msg_rx.id == CANMSG_JOYSTICK) {
                 x = -(msg_rx.data[0]-130);
                 y = ((msg_rx.data[1]) * 47 + 9000)/10;
                 button = msg_rx.data[2];
+
+                pritnf("JOYSTICK: %d %d %d", x, y, button);
             }
 
-            if (msg_rx.id == CANMSG_SCOREBOARD_RESET) {
-                x = 130;
-                y = 450;
-                button = 0;
-                score_init();
-            }
+            printf("\n");
+        }
 
+        switch(game_state) {
+            case IDLE:
+                break;
+                if (button) {
+                    set_solenoid(1);
+                    transition_to_state(PLAYING);
+                }
+            case PLAYING: {
+
+                motorController_setTarget(x * 4 + 450);
+                pwm_set_duty_us(1,y);
+                set_solenoid(button);
+
+                if (IR_flag) {
+                    IR_flag = 0;
+                    transition_to_state(LIFE_LOST);
+
+                    if (lives <= 0) {
+                        transition_to_state(GAME_OVER);
+                    }
+                }
+
+                score_update();
+                break;
+            }
+            case LIFE_LOST:
+                motorController_setTarget(x * 4 + 450);
+                pwm_set_duty_us(1,y);
+
+                if (new_message && button) {
+                    set_solenoid(1);
+                    transition_to_state(PLAYING);
+                }
+                break;
+
+            case GAME_OVER:
+                printf("GAME OVER\n");
+                break;
+        }
+
+        if (new_message) {
             new_message = false;
         }
 
-        motorController_setTarget(x * 4 + 450);
-        pwm_set_duty_us(1,y);
-        set_solenoid(button);
-        score(button);
         // printf("%d %d %d ", x,y,button);
     }
 }
 
-void score(uint32_t button){
+void score_update(void){
     game_time = totalSeconds(time_now()) - game_start_time;
-    
-    if (!game_freeze && IR_flag == 1){
-        lives -= 1;
-        IR_flag = 0;
-        game_freeze = 1;
-
-        NVIC_EnableIRQ(ADC_IRQn);
-    }
-    if (button == 1){
-        game_freeze = 0;
-        printf("game unfreeze\n");
-    }
     
     CAN_MESSAGE msg_tx;
     msg_tx.id = 1;
-    msg_tx.data_length = 3;
+    msg_tx.data_length = CANMSG_SCOREBOARD_DATA;
     msg_tx.data[0] = (uint8_t)(game_time & 0xFF);
     msg_tx.data[1] = (uint8_t)(game_time >> 8);
     msg_tx.data[2] = lives;
@@ -94,12 +164,10 @@ void score(uint32_t button){
         printf("Canbus transmit: %d %d\n", game_time, lives);
         can_copy_message(&msg_tx, &last_msg_tx);
     }
-
-    time_spinFor(msecs(10));
 }
 
-void score_init(){
+void score_init() {
     lives = 5;
     game_start_time = totalSeconds(time_now());
-    game_freeze = 0;
+    last_msg_tx.id = 100;
 }

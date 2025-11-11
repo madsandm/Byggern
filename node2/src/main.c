@@ -46,7 +46,6 @@ int main()
 
     WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
-    score_init();
     can_joystick_to_us();
     
     while (1)
