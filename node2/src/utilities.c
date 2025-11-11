@@ -83,7 +83,7 @@ void score(uint32_t button){
     }
     
     CAN_MESSAGE msg_tx;
-    msg_tx.id = 1;
+    msg_tx.id = CANMSG_SCOREBOARD_DATA;
     msg_tx.data_length = 3;
     msg_tx.data[0] = (uint8_t)(game_time & 0xFF);
     msg_tx.data[1] = (uint8_t)(game_time >> 8);

@@ -48,23 +48,4 @@ int main()
 
     score_init();
     can_joystick_to_us();
-    
-    while (1)
-    {
-        /* code */
-        CAN_MESSAGE msg_rx;
-        printf("Starting main loop\n\r");
-
-        //printf("Hello World\n\r");
-        if (can_receive(&msg_rx, 0) == 0) {
-            printf("ID: %d, Size: %d, Data: ", msg_rx.id, msg_rx.data_length);
-            for (int i = 0; i < msg_rx.data_length; i++) {
-                printf("%d ", (unsigned char)msg_rx.data[i]);
-            }
-            printf("\n\r");
-        } else {
-            //printf("No CAN message received\n\r");
-        }
-    }
-    return 0;
 }
