@@ -14,6 +14,7 @@ uint32_t game_time;
 uint32_t lives;
 uint32_t game_freeze;
 uint32_t game_freeze_time;
+CAN_MESSAGE last_msg_tx;
 
 uint32_t can_joystick_to_us(){
     volatile int x;
@@ -71,7 +72,12 @@ void score(uint32_t b){
     msg_tx.data[0] = (uint8_t)(game_time & 0xFF);
     msg_tx.data[1] = (uint8_t)(game_time >> 8);
     msg_tx.data[2] = lives;
-    can_send(&msg_tx,0);
+    if (msg_tx.data != last_msg_tx.data){
+        can_send(&msg_tx,0);
+        for (int i = 0; i < msg_tx.data_length; i++){
+            last_msg_tx.data[i] = msg_tx.data[i];
+        }
+    }
     time_spinFor(msecs(10));
     printf("%d %d\n", game_time, lives);
 }
