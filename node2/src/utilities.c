@@ -23,11 +23,7 @@ uint32_t can_joystick_to_us(){
     volatile uint32_t button;
     CAN_MESSAGE msg_tx;
     bool new_message = false;
-    msg_tx.id = 1;
-    msg_tx.data_length = 3;
-    msg_tx.data[0] = 1;
-    msg_tx.data[1] = 2;
-    msg_tx.data[2] = 3;
+    
     while (1) {
         CAN_MESSAGE msg_rx;
         if (RX_MB1_FLAG){
@@ -59,6 +55,8 @@ uint32_t can_joystick_to_us(){
                 button = 0;
                 score_init();
             }
+
+            new_message = false;
         }
 
         motorController_setTarget(x * 4 + 450);
@@ -76,6 +74,8 @@ void score(uint32_t button){
         lives -= 1;
         IR_flag = 0;
         game_freeze = 1;
+
+        NVIC_EnableIRQ(ADC_IRQn);
     }
     if (button == 1){
         game_freeze = 0;
